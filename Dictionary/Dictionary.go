@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 )
 
 // ReadLines opens dictionary file
@@ -25,11 +26,17 @@ func ReadLines(path string) ([]string, error) {
 // FilterWords chooses only winning words
 func FilterWords(lines []string) []string {
 	var filteredWords []string
+	prevValidWord := ""
 	for _, v := range lines {
 		if len(v) > 3 {
-			filteredWords = append(filteredWords, v)
+			reg := fmt.Sprintf("^%s", prevValidWord)
+			match, _ := regexp.MatchString(reg, v)
+			if len(prevValidWord) == 0 || !match {
+				prevValidWord = v
+				filteredWords = append(filteredWords, v)
+				fmt.Println(prevValidWord)
+			}
 		}
 	}
-	fmt.Print(filteredWords)
-	return lines
+	return filteredWords
 }
