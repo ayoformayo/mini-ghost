@@ -38,5 +38,22 @@ func FilterWords(lines []string) []string {
 			}
 		}
 	}
+	writeEligibleDictionary(filteredWords)
 	return filteredWords
+}
+
+func writeEligibleDictionary(lines []string) {
+	f, _ := os.Create("Dictionary/EligibleDictionary.txt")
+	// check(err)
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	for _, word := range lines {
+		withNewline := fmt.Sprintf("%s\n", word)
+		writtenWord, _ := w.WriteString(withNewline)
+		// w.WriteString("\n")
+		fmt.Printf("wrote %d bytes\n", writtenWord)
+
+	}
+	w.Flush()
 }
