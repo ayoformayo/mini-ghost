@@ -7,8 +7,33 @@ import (
 	"regexp"
 )
 
+// Dictionary struct
+type Dictionary struct {
+	EligibleWords []string
+}
+
+// LoadEligibleWords gets it in memory
+func (dictionary *Dictionary) LoadEligibleWords() {
+	lines, _ := dictionary.ReadLines("Dictionary/EligibleDictionary.txt")
+	dictionary.EligibleWords = lines
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+// FragmentIsWord sees if this exists
+func (dictionary *Dictionary) FragmentIsWord(fragment string) bool {
+	return contains(dictionary.EligibleWords, fragment)
+}
+
 // ReadLines opens dictionary file
-func ReadLines(path string) ([]string, error) {
+func (dictionary *Dictionary) ReadLines(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -41,6 +66,10 @@ func FilterWords(lines []string) []string {
 	writeEligibleDictionary(filteredWords)
 	return filteredWords
 }
+
+// func CheckWord(fragment []string) {
+//
+// }
 
 func writeEligibleDictionary(lines []string) {
 	f, _ := os.Create("Dictionary/EligibleDictionary.txt")
