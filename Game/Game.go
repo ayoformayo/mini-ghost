@@ -37,25 +37,50 @@ func (game *Game) getPlayerCount() int {
 func (game *Game) populatePlayers(count int) {
 	i := 0
 	for i < count {
-		game.Players = append(game.Players, Player.Player{Name: fmt.Sprintf("Player %d", i), Reader: game.reader})
+		game.Players = append(game.Players,
+			Player.Player{Name: fmt.Sprintf("Player %d", i+1),
+				Dictionary: game.Dictionary,
+				Number:     i,
+				IsAI:       i != 0,
+				Reader:     game.reader})
 		i++
 	}
 }
 
 func (game *Game) playRound() {
 	fmt.Print("What will the first letter be?\n")
-	activePlayer := game.Players[game.ActivePlayer]
-	firstLetter := activePlayer.RequestLetter()
-	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: firstLetter}
-	fmt.Println(fmt.Sprintf("Phrase is now at %s", round.Fragment))
+	fmt.Println(len(game.Players))
+	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: ""}
+	var lastPlayer Player.Player
 	for !game.Dictionary.FragmentIsWord(round.Fragment) {
-		letter := activePlayer.RequestLetter()
+		fmt.Println(fmt.Sprintf("len(game.Players) = %d", len(game.Players)))
+		fmt.Println(fmt.Sprintf("game.ActivePlayer = %d", game.ActivePlayer))
+		activePlayer := game.Players[game.ActivePlayer]
+		// this needs to be thought out better
+		if game.ActivePlayer < len(game.Players)-1 {
+			game.ActivePlayer++
+		} else {
+			game.ActivePlayer = 0
+		}
+		fmt.Println(fmt.Sprintf("It is %s's turn", activePlayer.Name))
+		letter := activePlayer.RequestLetter(round.Fragment)
 		round.Fragment += letter
-		fmt.Println(fmt.Sprintf("You wrote %s", letter))
+		fmt.Println(fmt.Sprintf("%s wrote %s", activePlayer.Name, letter))
 		fmt.Println(fmt.Sprintf("Phrase is now at %s", round.Fragment))
-		fmt.Println(fmt.Sprintf("You wrote %s", letter))
+		lastPlayer = activePlayer
+		// fmt.Println("\n")
 	}
+
+	game.ActivePlayer = lastPlayer.Number
+	ghostLetter := string("GHOST"[len(lastPlayer.Letters)])
+	lastPlayer.Letters += ghostLetter
 	game.Rounds = append(game.Rounds, round)
+
+	if lastPlayer.Letters != "GHOST" {
+		fmt.Println(fmt.Sprintf("%s now has %s", lastPlayer.Name, lastPlayer.Letters))
+		fmt.Println()
+		game.playRound()
+	}
 }
 
 // StartGame does something

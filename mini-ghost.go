@@ -11,7 +11,7 @@ func main() {
 	// filteredWords := Dictionary.FilterWords(unfilteredWords)
 	dictionary := Dictionary.Dictionary{}
 	dictionary.LoadEligibleWords()
-	game := Game.Game{ActivePlayer: 0, Dictionary: dictionary}
+	game := Game.Game{Dictionary: dictionary}
 	game.StartGame()
 	// fmt.Print(len(filteredWords))
 
