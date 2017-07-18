@@ -27,6 +27,19 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+// FindEligibleFragment finds next possible letter
+func (dictionary *Dictionary) FindEligibleFragment(fragment string) string {
+	reg := fmt.Sprintf("^%s.+", fragment)
+	letterPosition := len(fragment)
+	for _, word := range dictionary.EligibleWords {
+		match, _ := regexp.MatchString(reg, word)
+		if match {
+			return string(word[letterPosition])
+		}
+	}
+	return fragment
+}
+
 // FragmentIsWord sees if this exists
 func (dictionary *Dictionary) FragmentIsWord(fragment string) bool {
 	return contains(dictionary.EligibleWords, fragment)

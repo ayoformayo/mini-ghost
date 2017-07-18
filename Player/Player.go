@@ -3,13 +3,19 @@ package Player
 import (
 	"bufio"
 	"fmt"
+	"strings"
+
+	"github.com/ayoformayo/mini-ghost/Dictionary"
 )
 
 // Player stuff
 type Player struct {
-	Letters string
-	Name    string
-	Reader  *bufio.Reader
+	Dictionary Dictionary.Dictionary
+	Letters    string
+	Name       string
+	Number     int
+	IsAI       bool
+	Reader     *bufio.Reader
 }
 
 // func isLetter(s string) bool {
@@ -21,9 +27,18 @@ type Player struct {
 // 	return true
 // }
 
+func (player *Player) findAnswer(fragment string) string {
+	return player.Dictionary.FindEligibleFragment(fragment)
+}
+
 // RequestLetter does something
-func (player *Player) RequestLetter() string {
+func (player *Player) RequestLetter(fragment string) string {
 	fmt.Print("Add a valid letter.\n")
-	nextLetter, _ := player.Reader.ReadString('\n')
-	return string(nextLetter[0])
+	var nextLetter string
+	if player.IsAI == true {
+		nextLetter = player.findAnswer(fragment)
+	} else {
+		nextLetter, _ = player.Reader.ReadString('\n')
+	}
+	return strings.ToUpper(string(nextLetter[0]))
 }
