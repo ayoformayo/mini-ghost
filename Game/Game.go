@@ -29,7 +29,7 @@ func (game *Game) getPlayerCount() int {
 	number, err := strconv.Atoi(strippedNumber)
 	if err != nil {
 		fmt.Println("Whoops! Not a valid number. Try again")
-		game.getPlayerCount()
+		return game.getPlayerCount()
 	}
 	return number
 }
@@ -53,8 +53,6 @@ func (game *Game) playRound() {
 	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: ""}
 	var lastPlayer Player.Player
 	for !game.Dictionary.FragmentIsWord(round.Fragment) {
-		fmt.Println(fmt.Sprintf("len(game.Players) = %d", len(game.Players)))
-		fmt.Println(fmt.Sprintf("game.ActivePlayer = %d", game.ActivePlayer))
 		activePlayer := game.Players[game.ActivePlayer]
 		// this needs to be thought out better
 		if game.ActivePlayer < len(game.Players)-1 {
