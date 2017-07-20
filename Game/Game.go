@@ -62,15 +62,16 @@ func (game *Game) playRound() {
 		fmt.Println(fmt.Sprintf("It is %s's turn", activePlayer.Name))
 		letter := activePlayer.TakeTurn(round.Fragment)
 		round.Fragment += letter
+		// to do - clean up if loop and dictionary loop up
 		if letter != "1" {
 			fmt.Println(fmt.Sprintf("%s wrote %s", activePlayer.Name, letter))
+			fmt.Println("")
 			fmt.Println(fmt.Sprintf("Phrase is now at %s", round.Fragment))
 			lastPlayer = activePlayer
 		} else {
 			fmt.Println(fmt.Sprintf("%s challenges", activePlayer.Name))
-			isWord := game.Dictionary.FragmentIsWord(round.Fragment)
 			isEligibleFragment := game.Dictionary.FindEligibleFragment(round.Fragment)
-			if isWord != true && len(isEligibleFragment) > 0 {
+			if len(isEligibleFragment) > 0 {
 				fmt.Println("Challenge Successful")
 				break
 			} else {
