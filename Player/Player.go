@@ -31,14 +31,17 @@ func (player *Player) findAnswer(fragment string) string {
 	return player.Dictionary.FindEligibleFragment(fragment)
 }
 
-// RequestLetter does something
-func (player *Player) RequestLetter(fragment string) string {
+// TakeTurn does something
+func (player *Player) TakeTurn(fragment string) string {
 	fmt.Print("Add a valid letter.\n")
 	var nextLetter string
 	if player.IsAI == true {
 		nextLetter = player.findAnswer(fragment)
 	} else {
 		nextLetter, _ = player.Reader.ReadString('\n')
+	}
+	if len(nextLetter) < 1 {
+		player.TakeTurn(fragment)
 	}
 	return strings.ToUpper(string(nextLetter[0]))
 }

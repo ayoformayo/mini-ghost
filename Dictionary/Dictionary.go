@@ -37,7 +37,7 @@ func (dictionary *Dictionary) FindEligibleFragment(fragment string) string {
 			return string(word[letterPosition])
 		}
 	}
-	return fragment
+	return ""
 }
 
 // FragmentIsWord sees if this exists
