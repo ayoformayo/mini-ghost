@@ -10,12 +10,14 @@ import (
 // Dictionary struct
 type Dictionary struct {
 	EligibleWords []string
+	TotalWords    []string
 }
 
 // LoadEligibleWords gets it in memory
 func (dictionary *Dictionary) LoadEligibleWords() {
 	lines, _ := dictionary.ReadLines("Dictionary/EligibleDictionary.txt")
 	dictionary.EligibleWords = lines
+	dictionary.TotalWords = lines
 }
 
 func contains(s []string, e string) bool {
@@ -31,13 +33,19 @@ func contains(s []string, e string) bool {
 func (dictionary *Dictionary) FindEligibleFragment(fragment string) string {
 	reg := fmt.Sprintf("^%s.+", fragment)
 	letterPosition := len(fragment)
+	newDictionary := []string{}
+	newFragment := ""
 	for _, word := range dictionary.EligibleWords {
 		match, _ := regexp.MatchString(reg, word)
 		if match {
-			return string(word[letterPosition])
+			if newFragment == "" {
+				newFragment = string(word[letterPosition])
+			}
+			newDictionary = append(newDictionary, word)
 		}
 	}
-	return ""
+	dictionary.EligibleWords = newDictionary
+	return newFragment
 }
 
 // FragmentIsWord sees if this exists
