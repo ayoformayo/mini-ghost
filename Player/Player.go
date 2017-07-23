@@ -3,6 +3,7 @@ package Player
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"strings"
 
 	"github.com/ayoformayo/mini-ghost/Dictionary"
@@ -28,7 +29,12 @@ type Player struct {
 // 	return true
 // }
 
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 func (player *Player) findAnswer(fragment string) string {
+	if len(fragment) == 0 {
+		return string(letters[rand.Intn(len(letters))])
+	}
 	return player.Dictionary.FindEligibleFragment(fragment)
 }
 

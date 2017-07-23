@@ -94,6 +94,11 @@ func (game *Game) playRound() {
 		fmt.Println(fmt.Sprintf("%s now has %s", lastPlayer.Name, lastPlayer.Letters))
 		fmt.Println()
 		game.playRound()
+	} else {
+		fmt.Println(fmt.Sprintf("%s has lost!", lastPlayer.Name))
+		for _, player := range game.Players {
+			fmt.Println(fmt.Sprintf("%s has %s!", player.Name, player.Letters))
+		}
 	}
 }
 
