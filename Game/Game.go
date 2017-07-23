@@ -39,10 +39,11 @@ func (game *Game) populatePlayers(count int) {
 	for i < count {
 		game.Players = append(game.Players,
 			Player.Player{Name: fmt.Sprintf("Player %d", i+1),
-				Dictionary: game.Dictionary,
-				Number:     i,
-				IsAI:       i != 0,
-				Reader:     game.reader})
+				Dictionary:  &game.Dictionary,
+				Number:      i,
+				IsAI:        i != 0,
+				PlayerCount: count,
+				Reader:      game.reader})
 		i++
 	}
 }
@@ -87,6 +88,7 @@ func (game *Game) playRound() {
 	ghostLetter := string("GHOST"[len(lastPlayer.Letters)])
 	lastPlayer.Letters += ghostLetter
 	game.Rounds = append(game.Rounds, round)
+	game.Dictionary.ResetDictionary()
 
 	if lastPlayer.Letters != "GHOST" {
 		fmt.Println(fmt.Sprintf("%s now has %s", lastPlayer.Name, lastPlayer.Letters))

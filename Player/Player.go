@@ -10,12 +10,13 @@ import (
 
 // Player stuff
 type Player struct {
-	Dictionary Dictionary.Dictionary
-	Letters    string
-	Name       string
-	Number     int
-	IsAI       bool
-	Reader     *bufio.Reader
+	Dictionary  *Dictionary.Dictionary
+	Letters     string
+	Name        string
+	Number      int
+	PlayerCount int
+	IsAI        bool
+	Reader      *bufio.Reader
 }
 
 // func isLetter(s string) bool {

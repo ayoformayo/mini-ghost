@@ -53,6 +53,11 @@ func (dictionary *Dictionary) FragmentIsWord(fragment string) bool {
 	return contains(dictionary.EligibleWords, fragment)
 }
 
+// ResetDictionary sets eligiblewords to all words again
+func (dictionary *Dictionary) ResetDictionary() {
+	dictionary.EligibleWords = dictionary.TotalWords
+}
+
 // ReadLines opens dictionary file
 func (dictionary *Dictionary) ReadLines(path string) ([]string, error) {
 	file, err := os.Open(path)
