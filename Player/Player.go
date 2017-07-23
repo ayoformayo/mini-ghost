@@ -41,7 +41,7 @@ func (player *Player) TakeTurn(fragment string) string {
 		nextLetter, _ = player.Reader.ReadString('\n')
 	}
 	if len(nextLetter) < 1 {
-		player.TakeTurn(fragment)
+		return "1"
 	}
 	return strings.ToUpper(string(nextLetter[0]))
 }
