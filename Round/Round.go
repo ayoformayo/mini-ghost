@@ -2,15 +2,27 @@ package Round
 
 // Round stuff
 type Round struct {
-	Number   int
-	Fragment string
+	Number      int
+	Fragment    string
+	RoundStates []roundState
 }
 
-// IncompleteFragment does something
-// func (round *Round) IncompleteFragment(dictionary *Dictionary.Dictionary) bool {
-// 	if len(round.Fragment) < 4 {
-// 		return true
-// 	}
-//
-// 	return dictionary.FragmentIsWord(round.Fragment)
-// }
+type roundState struct {
+	Letter   string
+	PlayerID int
+}
+
+// GameState does something
+func (round *Round) GameState() string {
+	compiledFragment := ""
+	for _, roundState := range round.RoundStates {
+		compiledFragment += roundState.Letter
+	}
+
+	return compiledFragment
+}
+
+// AppendLetter does something
+func (round *Round) AppendLetter(letter string, PlayerID int) {
+	round.RoundStates = append(round.RoundStates, roundState{Letter: letter, PlayerID: PlayerID})
+}

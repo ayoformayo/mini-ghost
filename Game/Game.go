@@ -52,7 +52,8 @@ func (game *Game) playRound() {
 	fmt.Print("What will the first letter be?\n")
 	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: ""}
 	var lastPlayerNumber int
-	for !game.Dictionary.FragmentIsWord(round.Fragment) {
+	for !game.Dictionary.FragmentIsWord(round.GameState()) {
+		fmt.Println(fmt.Sprintf("round.GameState() = %s", round.GameState()))
 		activePlayer := game.Players[game.ActivePlayer]
 		// this needs to be thought out better
 		if game.ActivePlayer < len(game.Players)-1 {
@@ -61,8 +62,8 @@ func (game *Game) playRound() {
 			game.ActivePlayer = 0
 		}
 		fmt.Println(fmt.Sprintf("It is %s's turn", activePlayer.Name))
-		letter := activePlayer.TakeTurn(round.Fragment)
-		round.Fragment += letter
+		letter := activePlayer.TakeTurn(round.GameState())
+		round.AppendLetter(letter, activePlayer.Number)
 		// to do - clean up if loop and dictionary loop up
 		if letter != "1" {
 			fmt.Println(fmt.Sprintf("%s wrote %s", activePlayer.Name, letter))
@@ -71,7 +72,7 @@ func (game *Game) playRound() {
 			lastPlayerNumber = activePlayer.Number
 		} else {
 			fmt.Println(fmt.Sprintf("%s challenges", activePlayer.Name))
-			isEligibleFragment := game.Dictionary.FindEligibleFragment(round.Fragment)
+			isEligibleFragment := game.Dictionary.FindEligibleFragment(round.GameState())
 			if len(isEligibleFragment) > 0 || isEligibleFragment == "" {
 				fmt.Println("Challenge Successful")
 				break
