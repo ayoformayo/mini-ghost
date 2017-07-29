@@ -52,7 +52,8 @@ func (game *Game) playRound() {
 	fmt.Print("What will the first letter be?\n")
 	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: ""}
 	var lastPlayerNumber int
-	for !game.Dictionary.FragmentIsWord(round.GameState()) {
+
+	for !game.Dictionary.WordTree.FragmentIsWord(round.GameState()) {
 		fmt.Println(fmt.Sprintf("round.GameState() = %s", round.GameState()))
 		activePlayer := game.Players[game.ActivePlayer]
 		// this needs to be thought out better
@@ -72,8 +73,8 @@ func (game *Game) playRound() {
 			lastPlayerNumber = activePlayer.Number
 		} else {
 			fmt.Println(fmt.Sprintf("%s challenges", activePlayer.Name))
-			isEligibleFragment := game.Dictionary.FindEligibleFragment(round.GameState())
-			if len(isEligibleFragment) > 0 || isEligibleFragment == "" {
+			isEligibleFragment := game.Dictionary.WordTree.IsEligible(round.GameState())
+			if isEligibleFragment {
 				fmt.Println("Challenge Successful")
 				break
 			} else {
@@ -89,7 +90,6 @@ func (game *Game) playRound() {
 	ghostLetter := string("GHOST"[len(lastPlayer.Letters)])
 	lastPlayer.Letters += ghostLetter
 	game.Rounds = append(game.Rounds, round)
-	game.Dictionary.ResetDictionary()
 
 	if lastPlayer.Letters != "GHOST" {
 		fmt.Println(fmt.Sprintf("%s now has %s", lastPlayer.Name, lastPlayer.Letters))

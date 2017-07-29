@@ -35,7 +35,23 @@ func (player *Player) findAnswer(fragment string) string {
 	if len(fragment) == 0 {
 		return string(letters[rand.Intn(len(letters))])
 	}
-	return player.Dictionary.FindEligibleFragment(fragment)
+	options := player.Dictionary.WordTree.GetFragmentChildren(fragment)
+	continuingMoves := []string{}
+	finishingMoves := []string{}
+	for key := range options {
+		nextOption := fragment + key
+		if !player.Dictionary.WordTree.FragmentIsWord(nextOption) {
+			continuingMoves = append(continuingMoves, key)
+		} else {
+			finishingMoves = append(continuingMoves, key)
+		}
+	}
+	fmt.Println(continuingMoves)
+	fmt.Println(finishingMoves)
+	if len(continuingMoves) > 0 {
+		return continuingMoves[0]
+	}
+	return finishingMoves[0]
 }
 
 // TakeTurn does something

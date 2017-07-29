@@ -51,6 +51,18 @@ func (tree *WordTree) IsEligible(fragment string) bool {
 	return false
 }
 
+// GetFragmentChildren  sees if this exists
+func (tree *WordTree) GetFragmentChildren(fragment string) map[string]*WordTree {
+	if len(fragment) < 1 {
+		return tree.Letters
+	}
+
+	asString := string(fragment[:1])
+	remainder := string(fragment[1:])
+
+	return tree.Letters[asString].GetFragmentChildren(remainder)
+}
+
 // // ResetDictionary sets eligiblewords to all words again
 // func (dictionary *Dictionary) ResetDictionary() {
 // 	dictionary.EligibleWords = dictionary.TotalWords
