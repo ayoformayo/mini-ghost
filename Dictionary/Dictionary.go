@@ -9,54 +9,52 @@ import (
 
 // Dictionary struct
 type Dictionary struct {
-	EligibleWords []string
-	TotalWords    []string
+	TotalWords []string
+	WordTree   WordTree
 }
 
 // LoadEligibleWords gets it in memory
 func (dictionary *Dictionary) LoadEligibleWords() {
 	lines, _ := ReadLines("Dictionary/EligibleDictionary.txt")
-	dictionary.EligibleWords = lines
 	dictionary.TotalWords = lines
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
+// HOW CAN WE COLLAPSE FOLLOWING LOGIC
+
+// FragmentIsWord sees if this exists
+func (tree *WordTree) FragmentIsWord(fragment string) bool {
+	if len(fragment) < 1 {
+		return tree.FinalWord == "true"
+	}
+
+	asString := string(fragment[:1])
+	remainder := string(fragment[1:])
+
+	if _, ok := tree.Letters[asString]; ok {
+		return tree.Letters[asString].FragmentIsWord(remainder)
 	}
 	return false
 }
 
-// FindEligibleFragment finds next possible letter
-func (dictionary *Dictionary) FindEligibleFragment(fragment string) string {
-	reg := fmt.Sprintf("^%s.+", fragment)
-	letterPosition := len(fragment)
-	newDictionary := []string{}
-	newFragment := ""
-	for _, word := range dictionary.EligibleWords {
-		match, _ := regexp.MatchString(reg, word)
-		if match {
-			if newFragment == "" {
-				newFragment = string(word[letterPosition])
-			}
-			newDictionary = append(newDictionary, word)
-		}
+// IsEligible  sees if this exists
+func (tree *WordTree) IsEligible(fragment string) bool {
+	if len(fragment) < 1 {
+		return true
 	}
-	dictionary.EligibleWords = newDictionary
-	return newFragment
+
+	asString := string(fragment[:1])
+	remainder := string(fragment[1:])
+
+	if _, ok := tree.Letters[asString]; ok {
+		return tree.Letters[asString].IsEligible(remainder)
+	}
+	return false
 }
 
-// FragmentIsWord sees if this exists
-func (dictionary *Dictionary) FragmentIsWord(fragment string) bool {
-	return contains(dictionary.EligibleWords, fragment)
-}
-
-// ResetDictionary sets eligiblewords to all words again
-func (dictionary *Dictionary) ResetDictionary() {
-	dictionary.EligibleWords = dictionary.TotalWords
-}
+// // ResetDictionary sets eligiblewords to all words again
+// func (dictionary *Dictionary) ResetDictionary() {
+// 	dictionary.EligibleWords = dictionary.TotalWords
+// }
 
 // ReadLines opens dictionary file
 func ReadLines(path string) ([]string, error) {
@@ -93,8 +91,8 @@ func (tree *WordTree) buildBranches(fragment string) {
 	tree.Letters[asString].buildBranches(remainder)
 }
 
-// FilterWords chooses only winning words
-func FilterWords(lines []string) []string {
+// BuildWordTree creates the word tree
+func BuildWordTree(lines []string) WordTree {
 	preceedingWord := ""
 	wordTree := WordTree{Letters: make(map[string]*WordTree)}
 
@@ -109,7 +107,7 @@ func FilterWords(lines []string) []string {
 		}
 	}
 	fmt.Println(wordTree)
-	return []string{}
+	return wordTree
 }
 
 func writeEligibleDictionary(lines []string) {
