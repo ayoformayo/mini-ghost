@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ayoformayo/mini-ghost/Dictionary"
+	"github.com/ayoformayo/mini-ghost/Round"
 )
 
 // Player stuff
@@ -20,26 +21,21 @@ type Player struct {
 	Reader      *bufio.Reader
 }
 
-// func isLetter(s string) bool {
-// 	for _, r := range s {
-// 		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') {
-// 			return false
-// 		}
-// 	}
-// 	return true
-// }
-
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-func (player *Player) findAnswer(fragment string) string {
-	if len(fragment) == 0 {
+// func minimax(options []string) int {
+//
+// }
+
+func (player *Player) findAnswer(round Round.Round) string {
+	if len(round.GameState()) == 0 {
 		return string(letters[rand.Intn(len(letters))])
 	}
-	options := player.Dictionary.WordTree.GetFragmentChildren(fragment)
+	options := player.Dictionary.WordTree.GetFragmentChildren(round.GameState())
 	continuingMoves := []string{}
 	finishingMoves := []string{}
 	for key := range options {
-		nextOption := fragment + key
+		nextOption := round.GameState() + key
 		if !player.Dictionary.WordTree.FragmentIsWord(nextOption) {
 			continuingMoves = append(continuingMoves, key)
 		} else {
@@ -55,11 +51,11 @@ func (player *Player) findAnswer(fragment string) string {
 }
 
 // TakeTurn does something
-func (player *Player) TakeTurn(fragment string) string {
+func (player *Player) TakeTurn(round Round.Round) string {
 	fmt.Print("Add a valid letter.\n")
 	var nextLetter string
 	if player.IsAI == true {
-		nextLetter = player.findAnswer(fragment)
+		nextLetter = player.findAnswer(round)
 	} else {
 		nextLetter, _ = player.Reader.ReadString('\n')
 	}

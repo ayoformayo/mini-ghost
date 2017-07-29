@@ -50,10 +50,10 @@ func (game *Game) populatePlayers(count int) {
 
 func (game *Game) playRound() {
 	fmt.Print("What will the first letter be?\n")
-	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: ""}
+	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: "", Dictionary: &game.Dictionary}
 	var lastPlayerNumber int
 
-	for !game.Dictionary.WordTree.FragmentIsWord(round.GameState()) {
+	for !round.IsOver() {
 		fmt.Println(fmt.Sprintf("round.GameState() = %s", round.GameState()))
 		activePlayer := game.Players[game.ActivePlayer]
 		// this needs to be thought out better
@@ -63,7 +63,7 @@ func (game *Game) playRound() {
 			game.ActivePlayer = 0
 		}
 		fmt.Println(fmt.Sprintf("It is %s's turn", activePlayer.Name))
-		letter := activePlayer.TakeTurn(round.GameState())
+		letter := activePlayer.TakeTurn(round)
 		round.AppendLetter(letter, activePlayer.Number)
 		// to do - clean up if loop and dictionary loop up
 		if letter != "1" {
