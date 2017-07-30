@@ -1,8 +1,7 @@
-package Player
+package player
 
 import (
 	"bufio"
-	"fmt"
 	"math/rand"
 	"strings"
 
@@ -15,47 +14,90 @@ type Player struct {
 	Dictionary  *Dictionary.Dictionary
 	Letters     string
 	Name        string
-	Number      int
+	ID          int
 	PlayerCount int
 	IsAI        bool
+	choice      *string
 	Reader      *bufio.Reader
 }
 
+// TestVersion for testing
+const TestVersion = 1
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-// func minimax(options []string) int {
-//
-// }
+// Score does b
+func (player *Player) Score(round Round.Round) int {
+	if round.DidLose(player.ID) {
+		return -10
+	} else if round.IsOver() {
+		return 10
+	}
+	return 0
+}
+
+func (player *Player) minimax(round Round.Round) int {
+	if round.IsOver() {
+		return player.Score(round)
+	}
+
+	scores := []int{}
+	moves := []string{}
+	options := player.Dictionary.WordTree.GetFragmentChildren(round.GameState())
+	for letter, _ := range options {
+		newRound := round
+		playerID := 1
+		if len(newRound.RoundStates)%2 != 0 {
+			playerID = 2
+		}
+
+		newRoundState := Round.RoundState{Letter: letter, PlayerID: playerID}
+		newRound.RoundStates = append(newRound.RoundStates, newRoundState)
+		minimaxed := player.minimax(newRound)
+		scores = append(scores, minimaxed)
+		moves = append(moves, letter)
+	}
+
+	if round.LastPlayer() != player.ID {
+		maxScore := -10
+		moveIndex := -1
+		for i, score := range scores {
+			if score >= maxScore {
+				maxScore = score
+				moveIndex = i
+			}
+		}
+		*player.choice = moves[moveIndex]
+		return maxScore
+	} else {
+		minScore := 10
+		moveIndex := 0
+		for i, score := range scores {
+			if score <= minScore {
+				minScore = score
+				*player.choice = "isMin"
+				moveIndex = i
+			}
+		}
+		*player.choice = moves[moveIndex]
+		return minScore
+	}
+}
 
 func (player *Player) findAnswer(round Round.Round) string {
 	if len(round.GameState()) == 0 {
 		return string(letters[rand.Intn(len(letters))])
 	}
-	options := player.Dictionary.WordTree.GetFragmentChildren(round.GameState())
-	continuingMoves := []string{}
-	finishingMoves := []string{}
-	for key := range options {
-		nextOption := round.GameState() + key
-		if !player.Dictionary.WordTree.FragmentIsWord(nextOption) {
-			continuingMoves = append(continuingMoves, key)
-		} else {
-			finishingMoves = append(continuingMoves, key)
-		}
-	}
-	fmt.Println(continuingMoves)
-	fmt.Println(finishingMoves)
-	if len(continuingMoves) > 0 {
-		return continuingMoves[0]
-	}
-	return finishingMoves[0]
+	player.minimax(round)
+	return *player.choice
 }
 
 // TakeTurn does something
 func (player *Player) TakeTurn(round Round.Round) string {
-	fmt.Print("Add a valid letter.\n")
 	var nextLetter string
 	if player.IsAI == true {
-		nextLetter = player.findAnswer(round)
+		player.choice = &nextLetter
+		player.findAnswer(round)
+		return nextLetter
 	} else {
 		nextLetter, _ = player.Reader.ReadString('\n')
 	}

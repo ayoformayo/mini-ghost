@@ -17,7 +17,7 @@ type Game struct {
 	ActivePlayer int
 	Name         string
 	Rounds       []Round.Round
-	Players      []Player.Player
+	Players      []player.Player
 	Dictionary   Dictionary.Dictionary
 	reader       *bufio.Reader
 	// letter
@@ -38,9 +38,10 @@ func (game *Game) populatePlayers(count int) {
 	i := 0
 	for i < count {
 		game.Players = append(game.Players,
-			Player.Player{Name: fmt.Sprintf("Player %d", i+1),
-				Dictionary:  &game.Dictionary,
-				Number:      i,
+			player.Player{Name: fmt.Sprintf("Player %d", i+1),
+				Dictionary: &game.Dictionary,
+				ID:         i,
+				// IsAI:       true,
 				IsAI:        i != 0,
 				PlayerCount: count,
 				Reader:      game.reader})
@@ -51,7 +52,7 @@ func (game *Game) populatePlayers(count int) {
 func (game *Game) playRound() {
 	fmt.Print("What will the first letter be?\n")
 	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: "", Dictionary: &game.Dictionary}
-	var lastPlayerNumber int
+	var lastPlayerID int
 
 	for !round.IsOver() {
 		fmt.Println(fmt.Sprintf("round.GameState() = %s", round.GameState()))
@@ -64,13 +65,13 @@ func (game *Game) playRound() {
 		}
 		fmt.Println(fmt.Sprintf("It is %s's turn", activePlayer.Name))
 		letter := activePlayer.TakeTurn(round)
-		round.AppendLetter(letter, activePlayer.Number)
+		round.AppendLetter(letter, activePlayer.ID)
 		// to do - clean up if loop and dictionary loop up
 		if letter != "1" {
 			fmt.Println(fmt.Sprintf("%s wrote %s", activePlayer.Name, letter))
 			fmt.Println("")
 			fmt.Println(fmt.Sprintf("Phrase is now at %s", round.Fragment))
-			lastPlayerNumber = activePlayer.Number
+			lastPlayerID = activePlayer.ID
 		} else {
 			fmt.Println(fmt.Sprintf("%s challenges", activePlayer.Name))
 			isEligibleFragment := game.Dictionary.WordTree.IsEligible(round.GameState())
@@ -79,13 +80,13 @@ func (game *Game) playRound() {
 				break
 			} else {
 				fmt.Println("Challenge Failed")
-				lastPlayerNumber = activePlayer.Number
+				lastPlayerID = activePlayer.ID
 				break
 			}
 		}
 	}
 
-	game.ActivePlayer = lastPlayerNumber
+	game.ActivePlayer = lastPlayerID
 	lastPlayer := &game.Players[game.ActivePlayer]
 	ghostLetter := string("GHOST"[len(lastPlayer.Letters)])
 	lastPlayer.Letters += ghostLetter
