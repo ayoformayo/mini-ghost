@@ -50,12 +50,11 @@ func (game *Game) populatePlayers(count int) {
 }
 
 func (game *Game) playRound() {
-	fmt.Print("What will the first letter be?\n")
+	fmt.Print("What will the next letter be?\n")
 	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: "", Dictionary: &game.Dictionary}
 	var lastPlayerID int
 
 	for !round.IsOver() {
-		fmt.Println(fmt.Sprintf("round.GameState() = %s", round.GameState()))
 		activePlayer := game.Players[game.ActivePlayer]
 		// this needs to be thought out better
 		if game.ActivePlayer < len(game.Players)-1 {
@@ -69,8 +68,7 @@ func (game *Game) playRound() {
 		// to do - clean up if loop and dictionary loop up
 		if letter != "1" {
 			fmt.Println(fmt.Sprintf("%s wrote %s", activePlayer.Name, letter))
-			fmt.Println("")
-			fmt.Println(fmt.Sprintf("Phrase is now at %s", round.Fragment))
+			fmt.Println(fmt.Sprintf("Phrase is now at %s", round.GameState()))
 			lastPlayerID = activePlayer.ID
 		} else {
 			fmt.Println(fmt.Sprintf("%s challenges", activePlayer.Name))
