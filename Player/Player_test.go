@@ -14,6 +14,8 @@ const targetTestVersion = 1
 var fakeDictionary = []string{
 	"AAHED",
 	"AAHING",
+	"ZIBELINE",
+	"ZIBELLINE",
 }
 
 var wordTree = Dictionary.BuildWordTree(fakeDictionary)
@@ -21,11 +23,11 @@ var wordTree = Dictionary.BuildWordTree(fakeDictionary)
 var dictionary = &Dictionary.Dictionary{WordTree: wordTree}
 
 var tests = []player.Player{
+	{ID: 0, IsAI: true, Dictionary: dictionary},
 	{ID: 1, IsAI: true, Dictionary: dictionary},
-	{ID: 2, IsAI: true, Dictionary: dictionary},
-	{ID: 3, IsAI: true, Dictionary: dictionary},
-	{ID: 4, IsAI: true, Dictionary: dictionary},
-	{ID: 5, IsAI: true, Dictionary: dictionary},
+	// {ID: 2, IsAI: true, Dictionary: dictionary},
+	// {ID: 3, IsAI: true, Dictionary: dictionary},
+	// {ID: 4, IsAI: true, Dictionary: dictionary},
 	// {"", 0},
 	// {" \t\n", 0},
 	// {"a", 1},
@@ -38,10 +40,10 @@ var tests = []player.Player{
 
 func TestScoreUnfinished(t *testing.T) {
 	roundStates := []Round.Move{
+		{Letter: "A", PlayerID: 0},
 		{Letter: "A", PlayerID: 1},
-		{Letter: "A", PlayerID: 2},
-		{Letter: "H", PlayerID: 3},
-		{Letter: "E", PlayerID: 4},
+		{Letter: "H", PlayerID: 2},
+		{Letter: "E", PlayerID: 3},
 	}
 	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
 	for _, test := range tests {
@@ -57,15 +59,15 @@ func TestScoreUnfinished(t *testing.T) {
 
 func TestScoreFinished(t *testing.T) {
 	roundStates := []Round.Move{
+		{Letter: "A", PlayerID: 0},
 		{Letter: "A", PlayerID: 1},
-		{Letter: "A", PlayerID: 2},
-		{Letter: "H", PlayerID: 3},
-		{Letter: "E", PlayerID: 4},
-		{Letter: "D", PlayerID: 5},
+		{Letter: "H", PlayerID: 0},
+		{Letter: "E", PlayerID: 1},
+		{Letter: "D", PlayerID: 0},
 	}
 
 	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
-	losingID := 5
+	losingID := 0
 	for _, test := range tests {
 		expectedScore := 10
 		if test.ID == losingID {
@@ -83,9 +85,9 @@ func TestScoreFinished(t *testing.T) {
 
 func TestTakeTurn(t *testing.T) {
 	roundStates := []Round.Move{
+		{Letter: "A", PlayerID: 0},
 		{Letter: "A", PlayerID: 1},
-		{Letter: "A", PlayerID: 2},
-		{Letter: "H", PlayerID: 3},
+		{Letter: "H", PlayerID: 0},
 		// {Letter: "E", PlayerID: 4},
 		// {Letter: "D", PlayerID: 5},
 	}
@@ -110,25 +112,50 @@ func TestTakeTurn(t *testing.T) {
 }
 
 var oneOnOne = []player.Player{
+	{ID: 0, IsAI: true, Dictionary: dictionary},
 	{ID: 1, IsAI: true, Dictionary: dictionary},
-	{ID: 2, IsAI: true, Dictionary: dictionary},
 }
+
+// func TestOneOnOne(t *testing.T) {
+// 	roundStates := []Round.Move{
+// 		{Letter: "A", PlayerID: 1},
+// 		{Letter: "A", PlayerID: 2},
+// 		{Letter: "H", PlayerID: 1},
+// 		// {Letter: "E", PlayerID: 4},
+// 		// {Letter: "D", PlayerID: 5},
+// 	}
+// 	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
+// 	playerTwo := oneOnOne[1]
+// 	winningLetter := "E"
+// 	for i := 0; i < 100; i++ {
+// 		answer := playerTwo.TakeTurn(round)
+// 		if answer != winningLetter {
+// 			t.Errorf("Player(%q)didnt use E to win, used %s", playerTwo.ID, answer)
+// 			break
+// 		}
+// 	}
+//
+// 	if player.TestVersion != targetTestVersion {
+// 		t.Fatalf("Found player.TestVersion = %v, want %v.", player.TestVersion, targetTestVersion)
+// 	}
+// }
 
 func TestOneOnOne(t *testing.T) {
 	roundStates := []Round.Move{
-		{Letter: "A", PlayerID: 1},
-		{Letter: "A", PlayerID: 2},
-		{Letter: "H", PlayerID: 1},
-		// {Letter: "E", PlayerID: 4},
-		// {Letter: "D", PlayerID: 5},
+		{Letter: "Z", PlayerID: 0},
+		{Letter: "I", PlayerID: 1},
+		{Letter: "B", PlayerID: 0},
+		{Letter: "E", PlayerID: 1},
+		{Letter: "L", PlayerID: 0},
 	}
+
 	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
 	playerTwo := oneOnOne[1]
-	winningLetter := "E"
+	winningLetter := "L"
 	for i := 0; i < 100; i++ {
 		answer := playerTwo.TakeTurn(round)
 		if answer != winningLetter {
-			t.Errorf("Player(%q)didnt use E to win, used %s", playerTwo.ID, answer)
+			t.Errorf("Player(%q)didnt use L to win, used %s", playerTwo.ID, answer)
 			break
 		}
 	}
