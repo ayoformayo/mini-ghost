@@ -46,9 +46,10 @@ func (player *Player) minimax(round Round.Round) int {
 	options := player.Dictionary.WordTree.GetFragmentChildren(round.GameState())
 	for letter, _ := range options {
 		newRound := round
-		playerID := 1
+		// THIS MUST GET FIXED AND NON HARDCODED
+		playerID := 0
 		if len(newRound.Moves)%2 != 0 {
-			playerID = 2
+			playerID = 1
 		}
 
 		newMove := Round.Move{Letter: letter, PlayerID: playerID}
@@ -75,7 +76,6 @@ func (player *Player) minimax(round Round.Round) int {
 		for i, score := range scores {
 			if score <= minScore {
 				minScore = score
-				*player.choice = "isMin"
 				moveIndex = i
 			}
 		}
