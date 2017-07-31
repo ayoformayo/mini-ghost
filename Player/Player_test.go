@@ -37,13 +37,13 @@ var tests = []player.Player{
 }
 
 func TestScoreUnfinished(t *testing.T) {
-	roundStates := []Round.RoundState{
+	roundStates := []Round.Move{
 		{Letter: "A", PlayerID: 1},
 		{Letter: "A", PlayerID: 2},
 		{Letter: "H", PlayerID: 3},
 		{Letter: "E", PlayerID: 4},
 	}
-	round := Round.Round{RoundStates: roundStates, Dictionary: dictionary}
+	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
 	for _, test := range tests {
 		if actual := test.Score(round); actual != 0 {
 			t.Errorf("Player(%q) expected %d, Actual %d", test.ID, 0, actual)
@@ -56,7 +56,7 @@ func TestScoreUnfinished(t *testing.T) {
 }
 
 func TestScoreFinished(t *testing.T) {
-	roundStates := []Round.RoundState{
+	roundStates := []Round.Move{
 		{Letter: "A", PlayerID: 1},
 		{Letter: "A", PlayerID: 2},
 		{Letter: "H", PlayerID: 3},
@@ -64,7 +64,7 @@ func TestScoreFinished(t *testing.T) {
 		{Letter: "D", PlayerID: 5},
 	}
 
-	round := Round.Round{RoundStates: roundStates, Dictionary: dictionary}
+	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
 	losingID := 5
 	for _, test := range tests {
 		expectedScore := 10
@@ -82,14 +82,14 @@ func TestScoreFinished(t *testing.T) {
 }
 
 func TestTakeTurn(t *testing.T) {
-	roundStates := []Round.RoundState{
+	roundStates := []Round.Move{
 		{Letter: "A", PlayerID: 1},
 		{Letter: "A", PlayerID: 2},
 		{Letter: "H", PlayerID: 3},
 		// {Letter: "E", PlayerID: 4},
 		// {Letter: "D", PlayerID: 5},
 	}
-	round := Round.Round{RoundStates: roundStates, Dictionary: dictionary}
+	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
 	validLetters := []string{"I", "E"}
 	for _, test := range tests {
 		isValid := false
@@ -115,14 +115,14 @@ var oneOnOne = []player.Player{
 }
 
 func TestOneOnOne(t *testing.T) {
-	roundStates := []Round.RoundState{
+	roundStates := []Round.Move{
 		{Letter: "A", PlayerID: 1},
 		{Letter: "A", PlayerID: 2},
 		{Letter: "H", PlayerID: 1},
 		// {Letter: "E", PlayerID: 4},
 		// {Letter: "D", PlayerID: 5},
 	}
-	round := Round.Round{RoundStates: roundStates, Dictionary: dictionary}
+	round := Round.Round{Moves: roundStates, Dictionary: dictionary}
 	playerTwo := oneOnOne[1]
 	winningLetter := "E"
 	for i := 0; i < 100; i++ {

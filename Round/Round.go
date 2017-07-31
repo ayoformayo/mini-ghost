@@ -6,13 +6,13 @@ import (
 
 // Round stuff
 type Round struct {
-	Number      int
-	Fragment    string
-	RoundStates []RoundState
-	Dictionary  *Dictionary.Dictionary
+	Number     int
+	Fragment   string
+	Moves      []Move
+	Dictionary *Dictionary.Dictionary
 }
 
-type RoundState struct {
+type Move struct {
 	Letter   string
 	PlayerID int
 }
@@ -20,17 +20,17 @@ type RoundState struct {
 // DidLose determines if round has ended
 func (round *Round) LastPlayer() int {
 
-	lengthRoundStates := len(round.RoundStates) - 1
-	lastRoundState := round.RoundStates[lengthRoundStates]
-	return lastRoundState.PlayerID
+	lengthMoves := len(round.Moves) - 1
+	lastMove := round.Moves[lengthMoves]
+	return lastMove.PlayerID
 }
 
 // LastMove determines if round has ended
-func (round *Round) LastMove() RoundState {
+func (round *Round) LastMove() Move {
 
-	lengthRoundStates := len(round.RoundStates) - 1
-	lastRoundState := round.RoundStates[lengthRoundStates]
-	return lastRoundState
+	lengthMoves := len(round.Moves) - 1
+	lastMove := round.Moves[lengthMoves]
+	return lastMove
 }
 
 // DidLose determines if a player took the last and losing turn of the game
@@ -49,8 +49,8 @@ func (round *Round) IsOver() bool {
 // GameState does something
 func (round *Round) GameState() string {
 	compiledFragment := ""
-	for _, RoundState := range round.RoundStates {
-		compiledFragment += RoundState.Letter
+	for _, Move := range round.Moves {
+		compiledFragment += Move.Letter
 	}
 
 	return compiledFragment
@@ -58,5 +58,5 @@ func (round *Round) GameState() string {
 
 // AppendLetter does something
 func (round *Round) AppendLetter(letter string, PlayerID int) {
-	round.RoundStates = append(round.RoundStates, RoundState{Letter: letter, PlayerID: PlayerID})
+	round.Moves = append(round.Moves, Move{Letter: letter, PlayerID: PlayerID})
 }

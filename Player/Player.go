@@ -2,6 +2,7 @@ package player
 
 import (
 	"bufio"
+	"fmt"
 	"math/rand"
 	"strings"
 
@@ -46,12 +47,12 @@ func (player *Player) minimax(round Round.Round) int {
 	for letter, _ := range options {
 		newRound := round
 		playerID := 1
-		if len(newRound.RoundStates)%2 != 0 {
+		if len(newRound.Moves)%2 != 0 {
 			playerID = 2
 		}
 
-		newRoundState := Round.RoundState{Letter: letter, PlayerID: playerID}
-		newRound.RoundStates = append(newRound.RoundStates, newRoundState)
+		newMove := Round.Move{Letter: letter, PlayerID: playerID}
+		newRound.Moves = append(newRound.Moves, newMove)
 		minimaxed := player.minimax(newRound)
 		scores = append(scores, minimaxed)
 		moves = append(moves, letter)
