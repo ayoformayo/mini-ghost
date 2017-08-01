@@ -42,7 +42,7 @@ func (player *Player) minimax(thisRound round.Round) int {
 
 	scores := []int{}
 	moves := []string{}
-	options := player.Dictionary.WordTree.GetFragmentChildren(thisRound.GameState())
+	options, _ := player.Dictionary.WordTree.GetFragmentChildren(thisRound.GameState())
 	for letter := range options {
 		newRound := thisRound
 		playerID := 0

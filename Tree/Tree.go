@@ -2,6 +2,7 @@ package tree
 import (
   "fmt"
   "regexp"
+  "errors"
 )
 // WordTree is Recursive data structure for branches of word search
 type WordTree struct {
@@ -23,7 +24,6 @@ func BuildWordTree(lines []string) WordTree {
 			}
 		}
 	}
-	fmt.Println(wordTree)
 	return wordTree
 }
 
@@ -47,13 +47,16 @@ func (tree *WordTree) FragmentIsWord(fragment string) bool {
 
 
 // GetFragmentChildren  sees if this exists
-func (tree *WordTree) GetFragmentChildren(fragment string) map[string]*WordTree {
+func (tree *WordTree) GetFragmentChildren(fragment string) (map[string]*WordTree, error) {
 	if len(fragment) < 1 {
-		return tree.Letters
+		return tree.Letters, nil
 	}
 
 	asString := string(fragment[:1])
 	remainder := string(fragment[1:])
+  if _, ok := tree.Letters[asString]; !ok{
+    return nil, errors.New("This is an invalid phrase")
+  }
 
 	return tree.Letters[asString].GetFragmentChildren(remainder)
 }
