@@ -18,7 +18,7 @@ type Game struct {
 	Name         string
 	Rounds       []round.Round
 	Players      []player.Player
-	Dictionary   Dictionary.Dictionary
+	Dictionary   dictionary.Dictionary
 	reader       *bufio.Reader
 	// letter
 }

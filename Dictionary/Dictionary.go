@@ -1,4 +1,4 @@
-package Dictionary
+package dictionary
 
 import (
 	"bufio"
@@ -14,9 +14,9 @@ type Dictionary struct {
 }
 
 // LoadEligibleWords gets it in memory
-func (dictionary *Dictionary) LoadEligibleWords() {
+func (thisDictionary *Dictionary) LoadEligibleWords() {
 	lines, _ := ReadLines("Dictionary/EligibleDictionary.txt")
-	dictionary.TotalWords = lines
+	thisDictionary.TotalWords = lines
 }
 
 // HOW CAN WE COLLAPSE FOLLOWING LOGIC

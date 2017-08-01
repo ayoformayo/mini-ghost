@@ -18,24 +18,17 @@ var fakeDictionary = []string{
 	"ZIBELLINE",
 }
 
-var wordTree = Dictionary.BuildWordTree(fakeDictionary)
+var wordTree = dictionary.BuildWordTree(fakeDictionary)
 
-var dictionary = &Dictionary.Dictionary{WordTree: wordTree}
+var thisDictionary = &dictionary.Dictionary{WordTree: wordTree}
 
 var tests = []player.Player{
-	{ID: 0, IsAI: true, Dictionary: dictionary},
-	{ID: 1, IsAI: true, Dictionary: dictionary},
+	{ID: 0, IsAI: true, Dictionary: thisDictionary},
+	{ID: 1, IsAI: true, Dictionary: thisDictionary},
 	// {ID: 2, IsAI: true, Dictionary: dictionary},
 	// {ID: 3, IsAI: true, Dictionary: dictionary},
 	// {ID: 4, IsAI: true, Dictionary: dictionary},
-	// {"", 0},
-	// {" \t\n", 0},
-	// {"a", 1},
-	// {"f", 4},
-	// {"street", 6},
-	// {"quirky", 22},
-	// {"OXYPHENBUTAZONE", 41},
-	// {"alacrity", 13},
+
 }
 
 func TestScoreUnfinished(t *testing.T) {
@@ -45,7 +38,7 @@ func TestScoreUnfinished(t *testing.T) {
 		{Letter: "H", PlayerID: 2},
 		{Letter: "E", PlayerID: 3},
 	}
-	round := round.Round{PlayerOrder: []int{0, 1, 2, 3}, Moves: roundStates, Dictionary: dictionary}
+	round := round.Round{PlayerOrder: []int{0, 1, 2, 3}, Moves: roundStates, Dictionary: thisDictionary}
 	for _, test := range tests {
 		if actual := test.Score(round); actual != 0 {
 			t.Errorf("Player(%q) expected %d, Actual %d", test.ID, 0, actual)
@@ -66,7 +59,7 @@ func TestScoreFinished(t *testing.T) {
 		{Letter: "D", PlayerID: 0},
 	}
 
-	round := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: dictionary}
+	round := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: thisDictionary}
 	losingID := 0
 	for _, test := range tests {
 		expectedScore := 10
@@ -91,7 +84,7 @@ func TestTakeTurn(t *testing.T) {
 		// {Letter: "E", PlayerID: 4},
 		// {Letter: "D", PlayerID: 5},
 	}
-	round := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: dictionary}
+	round := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: thisDictionary}
 	validLetters := []string{"I", "E"}
 	for _, test := range tests {
 		isValid := false
@@ -112,8 +105,8 @@ func TestTakeTurn(t *testing.T) {
 }
 
 var oneOnOne = []player.Player{
-	{ID: 0, IsAI: true, Dictionary: dictionary},
-	{ID: 1, IsAI: true, Dictionary: dictionary},
+	{ID: 0, IsAI: true, Dictionary: thisDictionary},
+	{ID: 1, IsAI: true, Dictionary: thisDictionary},
 }
 
 // func TestOneOnOne(t *testing.T) {
@@ -149,7 +142,7 @@ func TestOneOnOne(t *testing.T) {
 		{Letter: "L", PlayerID: 0},
 	}
 
-	round := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: dictionary}
+	round := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: thisDictionary}
 	playerTwo := oneOnOne[1]
 	winningLetter := "L"
 	for i := 0; i < 100; i++ {

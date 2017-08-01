@@ -5,13 +5,13 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/ayoformayo/mini-ghost/Dictionary"
+	dictionary "github.com/ayoformayo/mini-ghost/Dictionary"
 	"github.com/ayoformayo/mini-ghost/Round"
 )
 
 // Player stuff
 type Player struct {
-	Dictionary  *Dictionary.Dictionary
+	Dictionary  *dictionary.Dictionary
 	Letters     string
 	Name        string
 	ID          int
@@ -68,18 +68,17 @@ func (player *Player) minimax(thisRound round.Round) int {
 		}
 		*player.choice = moves[moveIndex]
 		return maxScore
-	} else {
-		minScore := 10
-		moveIndex := 0
-		for i, score := range scores {
-			if score <= minScore {
-				minScore = score
-				moveIndex = i
-			}
-		}
-		*player.choice = moves[moveIndex]
-		return minScore
 	}
+	minScore := 10
+	moveIndex := 0
+	for i, score := range scores {
+		if score <= minScore {
+			minScore = score
+			moveIndex = i
+		}
+	}
+	*player.choice = moves[moveIndex]
+	return minScore
 }
 
 func (player *Player) findAnswer(thisRound round.Round) string {

@@ -1,15 +1,13 @@
 package round
 
-import (
-	"github.com/ayoformayo/mini-ghost/Dictionary"
-)
+import dictionary "github.com/ayoformayo/mini-ghost/Dictionary"
 
 // Round stuff
 type Round struct {
 	Number      int
 	Moves       []Move
 	PlayerOrder []int
-	Dictionary  *Dictionary.Dictionary
+	Dictionary  *dictionary.Dictionary
 }
 
 type Move struct {
