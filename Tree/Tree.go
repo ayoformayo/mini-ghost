@@ -1,10 +1,31 @@
 package tree
+import (
+  "fmt"
+  "regexp"
+)
 // WordTree is Recursive data structure for branches of word search
 type WordTree struct {
 	FinalWord string
 	Letters   map[string]*WordTree
 }
 
+// BuildWordTree creates the word tree
+func BuildWordTree(lines []string) WordTree {
+	preceedingWord := ""
+	wordTree := WordTree{Letters: make(map[string]*WordTree)}
+	for _, v := range lines {
+		if len(v) > 3 {
+			reg := fmt.Sprintf("^%s", preceedingWord)
+			match, _ := regexp.MatchString(reg, v)
+			if len(preceedingWord) == 0 || !match {
+				preceedingWord = v
+				wordTree.BuildBranches(v)
+			}
+		}
+	}
+	fmt.Println(wordTree)
+	return wordTree
+}
 
 // HOW CAN WE COLLAPSE FOLLOWING LOGIC
 

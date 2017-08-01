@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"regexp"
 
 	tree "github.com/ayoformayo/mini-ghost/Tree"
 )
@@ -35,25 +34,6 @@ func ReadLines(path string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
-}
-
-// BuildWordTree creates the word tree
-func BuildWordTree(lines []string) tree.WordTree {
-	preceedingWord := ""
-	wordTree := tree.WordTree{Letters: make(map[string]*tree.WordTree)}
-
-	for _, v := range lines {
-		if len(v) > 3 {
-			reg := fmt.Sprintf("^%s", preceedingWord)
-			match, _ := regexp.MatchString(reg, v)
-			if len(preceedingWord) == 0 || !match {
-				preceedingWord = v
-				wordTree.BuildBranches(v)
-			}
-		}
-	}
-	fmt.Println(wordTree)
-	return wordTree
 }
 
 func writeEligibleDictionary(lines []string) {

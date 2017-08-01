@@ -7,6 +7,7 @@ import (
 	"github.com/ayoformayo/mini-ghost/Dictionary"
 	player "github.com/ayoformayo/mini-ghost/Player"
 	round "github.com/ayoformayo/mini-ghost/Round"
+	tree "github.com/ayoformayo/mini-ghost/Tree"
 )
 
 const targetTestVersion = 1
@@ -18,7 +19,7 @@ var fakeDictionary = []string{
 	"ZIBELLINE",
 }
 
-var wordTree = dictionary.BuildWordTree(fakeDictionary)
+var wordTree = tree.BuildWordTree(fakeDictionary)
 
 var thisDictionary = &dictionary.Dictionary{WordTree: wordTree}
 
