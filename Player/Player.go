@@ -43,7 +43,7 @@ func (player *Player) minimax(thisRound round.Round) int {
 	scores := []int{}
 	moves := []string{}
 	options := player.Dictionary.WordTree.GetFragmentChildren(thisRound.GameState())
-	for letter, _ := range options {
+	for letter := range options {
 		newRound := thisRound
 		// THIS MUST GET FIXED AND NON HARDCODED
 		playerID := 0
@@ -96,8 +96,7 @@ func (player *Player) TakeTurn(thisRound round.Round) string {
 	var nextLetter string
 	if player.IsAI == true {
 		player.choice = &nextLetter
-		player.findAnswer(thisRound)
-		return nextLetter
+		nextLetter = player.findAnswer(thisRound)
 	} else {
 		nextLetter, _ = player.Reader.ReadString('\n')
 	}

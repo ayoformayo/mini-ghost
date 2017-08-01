@@ -24,8 +24,9 @@ var wordTree = Dictionary.BuildWordTree(fakeDictionary)
 var dictionary = &Dictionary.Dictionary{WordTree: wordTree}
 
 type testCase struct {
-	round    round.Round
-	expected []int
+	round               round.Round
+	expectedPlayerOrder []int
+	expectedLastPlayer  int
 }
 
 var tests = []testCase{
@@ -33,20 +34,66 @@ var tests = []testCase{
 		round: round.Round{
 			Dictionary:  dictionary,
 			PlayerOrder: []int{0, 1},
+			Moves: []round.Move{
+				{Letter: "A", PlayerID: 0},
+				{Letter: "A", PlayerID: 1},
+				{Letter: "H", PlayerID: 0},
+				{Letter: "I", PlayerID: 1},
+				{Letter: "N", PlayerID: 0},
+				{Letter: "G", PlayerID: 1},
+			},
 		},
-		expected: []int{1, 0},
+		expectedPlayerOrder: []int{1, 0},
 	},
 	// {ID: 2, IsAI: true, Dictionary: dictionary},
 	// {ID: 3, IsAI: true, Dictionary: dictionary},
 	// {ID: 4, IsAI: true, Dictionary: dictionary},
-	// {"", 0},
-	// {" \t\n", 0},
-	// {"a", 1},
-	// {"f", 4},
-	// {"street", 6},
-	// {"quirky", 22},
-	// {"OXYPHENBUTAZONE", 41},
-	// {"alacrity", 13},
+}
+
+func TestAppendLetter(t *testing.T) {
+	for _, test := range tests {
+		test.round.AppendLetter("T", 0)
+		expectedLastMove := test.round.LastMove()
+		testMove := round.Move{Letter: "T", PlayerID: 0}
+		if !reflect.DeepEqual(testMove, expectedLastMove) {
+			t.Errorf("Round returned appended generated %v, not %v", testMove, expectedLastMove)
+		}
+	}
+}
+
+func TestLastPlayer(t *testing.T) {
+	for _, test := range tests {
+		lastPlayer := test.round.LastPlayer()
+		finalIndex := len(test.round.Moves) - 1
+		expectedLastPlayer := test.round.Moves[finalIndex]
+		if lastPlayer != expectedLastPlayer.PlayerID {
+			t.Errorf("Round returned last player as %d, not %d", lastPlayer, expectedLastPlayer.PlayerID)
+		}
+	}
+}
+
+func TestLastMove(t *testing.T) {
+	for _, test := range tests {
+		lastMove := test.round.LastMove()
+		finalIndex := len(test.round.Moves) - 1
+		expectedLastMove := test.round.Moves[finalIndex]
+		if !reflect.DeepEqual(lastMove, expectedLastMove) {
+			t.Errorf("Round returned last player as %v, not %v", lastMove, expectedLastMove)
+		}
+	}
+}
+
+func TestDidLose(t *testing.T) {
+	for _, test := range tests {
+		expectedLastPlayerID := test.round.LastPlayer()
+		for _, playerID := range test.round.PlayerOrder {
+			didLose := test.round.DidLose(playerID)
+			if playerID != playerID && didLose {
+
+				t.Errorf("Round returned last player as %d, not %d", didLose, expectedLastPlayerID)
+			}
+		}
+	}
 }
 
 func TestGenerateNextRound(t *testing.T) {
@@ -62,11 +109,8 @@ func TestGenerateNextRound(t *testing.T) {
 	for _, test := range tests {
 		test.round.Moves = roundStates
 		test.round.Dictionary = dictionary
-		// if test.expected := test.round.GenerateRound(); actual != 0 {
-		// 	t.Errorf("Player(%q) expected %d, Actual %d", test.ID, 0, actual)
-		// }
 		nextRound := test.round.GenerateNextRound()
-		if !reflect.DeepEqual(nextRound.PlayerOrder, test.expected) {
+		if !reflect.DeepEqual(nextRound.PlayerOrder, test.expectedPlayerOrder) {
 			t.Errorf("Round generated %v, not %v", nextRound.PlayerOrder, []int{1, 0})
 		}
 	}
