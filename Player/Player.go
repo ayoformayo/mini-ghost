@@ -45,7 +45,6 @@ func (player *Player) minimax(thisRound round.Round) int {
 	options := player.Dictionary.WordTree.GetFragmentChildren(thisRound.GameState())
 	for letter := range options {
 		newRound := thisRound
-		// THIS MUST GET FIXED AND NON HARDCODED
 		playerID := 0
 		if len(thisRound.PlayerOrder) > 0 {
 			playerID = len(newRound.Moves) % len(thisRound.PlayerOrder)

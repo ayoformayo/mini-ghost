@@ -165,38 +165,38 @@ func TestOneOnOne(t *testing.T) {
 	}
 }
 
-var manyOnMany = []player.Player{
-	{ID: 0, IsAI: true, Dictionary: dictionary},
-	{ID: 1, IsAI: true, Dictionary: dictionary},
-	{ID: 2, IsAI: true, Dictionary: dictionary},
-	{ID: 3, IsAI: true, Dictionary: dictionary},
-	{ID: 4, IsAI: true, Dictionary: dictionary},
-}
-
-func TestManyOnMany(t *testing.T) {
-	roundStates := []round.Move{
-		{Letter: "Z", PlayerID: 0},
-		{Letter: "I", PlayerID: 1},
-		{Letter: "B", PlayerID: 2},
-		{Letter: "E", PlayerID: 3},
-		{Letter: "L", PlayerID: 4},
-	}
-
-	round := round.Round{PlayerOrder: []int{0, 1, 2, 3, 4}, Moves: roundStates, Dictionary: dictionary}
-	activePlayer := manyOnMany[len(roundStates)-1]
-	winningLetter := "L"
-	for i := 0; i < 100; i++ {
-		answer := activePlayer.TakeTurn(round)
-		if answer != winningLetter {
-			t.Errorf("Player(%q)didnt use L to win, used %s", activePlayer.ID, answer)
-			break
-		}
-	}
-
-	if player.TestVersion != targetTestVersion {
-		t.Fatalf("Found player.TestVersion = %v, want %v.", player.TestVersion, targetTestVersion)
-	}
-}
+// var manyOnMany = []player.Player{
+// 	{ID: 0, IsAI: true, Dictionary: dictionary},
+// 	{ID: 1, IsAI: true, Dictionary: dictionary},
+// 	{ID: 2, IsAI: true, Dictionary: dictionary},
+// 	{ID: 3, IsAI: true, Dictionary: dictionary},
+// 	{ID: 4, IsAI: true, Dictionary: dictionary},
+// }
+//
+// func TestManyOnMany(t *testing.T) {
+// 	roundStates := []round.Move{
+// 		{Letter: "Z", PlayerID: 0},
+// 		{Letter: "I", PlayerID: 1},
+// 		{Letter: "B", PlayerID: 2},
+// 		{Letter: "E", PlayerID: 3},
+// 		{Letter: "L", PlayerID: 4},
+// 	}
+//
+// 	round := round.Round{PlayerOrder: []int{0, 1, 2, 3, 4}, Moves: roundStates, Dictionary: dictionary}
+// 	activePlayer := manyOnMany[len(roundStates)-1]
+// 	winningLetter := "L"
+// 	for i := 0; i < 100; i++ {
+// 		answer := activePlayer.TakeTurn(round)
+// 		if answer != winningLetter {
+// 			t.Errorf("Player(%q)didnt use L to win, used %s", activePlayer.ID, answer)
+// 			break
+// 		}
+// 	}
+//
+// 	if player.TestVersion != targetTestVersion {
+// 		t.Fatalf("Found player.TestVersion = %v, want %v.", player.TestVersion, targetTestVersion)
+// 	}
+// }
 
 func BenchmarkScore(b *testing.B) {
 	for i := 0; i < b.N; i++ {
