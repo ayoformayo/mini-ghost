@@ -9,14 +9,14 @@ import (
 
 	"github.com/ayoformayo/mini-ghost/Dictionary"
 	"github.com/ayoformayo/mini-ghost/Player"
-	"github.com/ayoformayo/mini-ghost/Round"
+	round "github.com/ayoformayo/mini-ghost/Round"
 )
 
 // Game stuff
 type Game struct {
 	ActivePlayer int
 	Name         string
-	Rounds       []Round.Round
+	Rounds       []round.Round
 	Players      []player.Player
 	Dictionary   Dictionary.Dictionary
 	reader       *bufio.Reader
@@ -49,9 +49,19 @@ func (game *Game) populatePlayers(count int) {
 	}
 }
 
-func (game *Game) playRound() {
+func (game *Game) generateFirstRound() round.Round {
+	playerCount := game.getPlayerCount()
+	game.populatePlayers(playerCount)
+	var playerIDs []int
+	for _, player := range game.Players {
+		playerIDs = append(playerIDs, player.ID)
+	}
+	return round.Round{Number: len(game.Rounds) + 1, Dictionary: &game.Dictionary, PlayerOrder: playerIDs}
+}
+
+func (game *Game) playRound(round round.Round) {
 	fmt.Print("What will the next letter be?\n")
-	round := Round.Round{Number: len(game.Rounds) + 1, Fragment: "", Dictionary: &game.Dictionary}
+	// return round.Round{Number: len(game.Rounds) + 1, Dictionary: &game.Dictionary}
 	var lastPlayerID int
 
 	for !round.IsOver() {
@@ -93,7 +103,8 @@ func (game *Game) playRound() {
 	if lastPlayer.Letters != "GHOST" {
 		fmt.Println(fmt.Sprintf("%s now has %s", lastPlayer.Name, lastPlayer.Letters))
 		fmt.Println()
-		game.playRound()
+		nextRound := round.GenerateNextRound()
+		game.playRound(nextRound)
 	} else {
 		fmt.Println(fmt.Sprintf("%s has lost!", lastPlayer.Name))
 		for _, player := range game.Players {
@@ -106,7 +117,6 @@ func (game *Game) playRound() {
 func (game *Game) StartGame() {
 	game.reader = bufio.NewReader(os.Stdin)
 	fmt.Print("Welcome to Ghost! Please select number of players - max 5\n")
-	playerCount := game.getPlayerCount()
-	game.populatePlayers(playerCount)
-	game.playRound()
+	round := game.generateFirstRound()
+	game.playRound(round)
 }

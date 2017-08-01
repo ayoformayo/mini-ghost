@@ -1,4 +1,4 @@
-package Round
+package round
 
 import (
 	"github.com/ayoformayo/mini-ghost/Dictionary"
@@ -6,10 +6,10 @@ import (
 
 // Round stuff
 type Round struct {
-	Number     int
-	Fragment   string
-	Moves      []Move
-	Dictionary *Dictionary.Dictionary
+	Number      int
+	Moves       []Move
+	PlayerOrder []int
+	Dictionary  *Dictionary.Dictionary
 }
 
 type Move struct {
@@ -17,7 +17,34 @@ type Move struct {
 	PlayerID int
 }
 
-// DidLose determines if round has ended
+const TestVersion = 1
+
+// GenerateNextRound creates round for game to pass on down with new pkayer order
+func (round *Round) GenerateNextRound() Round {
+	if round.IsOver() {
+		playerOrder := round.getNextPlayerOrder()
+		round := Round{Dictionary: round.Dictionary, PlayerOrder: playerOrder}
+		return round
+	}
+	return Round{}
+}
+
+func (thisRound *Round) getNextPlayerOrder() []int {
+	lastPlayerID := thisRound.LastPlayer()
+	var playerIndex int
+	for i, playerID := range thisRound.PlayerOrder {
+		if playerID == lastPlayerID {
+			playerIndex = i
+			break
+		}
+	}
+
+	beforeIndex := thisRound.PlayerOrder[:playerIndex]
+	afterIndex := thisRound.PlayerOrder[playerIndex:]
+	return append(afterIndex, beforeIndex...)
+}
+
+// LastPlayer determines if round has ended
 func (round *Round) LastPlayer() int {
 
 	lengthMoves := len(round.Moves) - 1

@@ -26,39 +26,39 @@ const TestVersion = 1
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 // Score does b
-func (player *Player) Score(round Round.Round) int {
-	if round.DidLose(player.ID) {
+func (player *Player) Score(thisRound round.Round) int {
+	if thisRound.DidLose(player.ID) {
 		return -10
-	} else if round.IsOver() {
+	} else if thisRound.IsOver() {
 		return 10
 	}
 	return 0
 }
 
-func (player *Player) minimax(round Round.Round) int {
-	if round.IsOver() {
-		return player.Score(round)
+func (player *Player) minimax(thisRound round.Round) int {
+	if thisRound.IsOver() {
+		return player.Score(thisRound)
 	}
 
 	scores := []int{}
 	moves := []string{}
-	options := player.Dictionary.WordTree.GetFragmentChildren(round.GameState())
+	options := player.Dictionary.WordTree.GetFragmentChildren(thisRound.GameState())
 	for letter, _ := range options {
-		newRound := round
+		newRound := thisRound
 		// THIS MUST GET FIXED AND NON HARDCODED
 		playerID := 0
-		if len(newRound.Moves)%2 != 0 {
-			playerID = 1
+		if len(thisRound.PlayerOrder) > 0 {
+			playerID = len(newRound.Moves) % len(thisRound.PlayerOrder)
 		}
 
-		newMove := Round.Move{Letter: letter, PlayerID: playerID}
+		newMove := round.Move{Letter: letter, PlayerID: playerID}
 		newRound.Moves = append(newRound.Moves, newMove)
 		minimaxed := player.minimax(newRound)
 		scores = append(scores, minimaxed)
 		moves = append(moves, letter)
 	}
 
-	if round.LastPlayer() != player.ID {
+	if thisRound.LastPlayer() != player.ID {
 		maxScore := -10
 		moveIndex := -1
 		for i, score := range scores {
@@ -83,20 +83,20 @@ func (player *Player) minimax(round Round.Round) int {
 	}
 }
 
-func (player *Player) findAnswer(round Round.Round) string {
-	if len(round.GameState()) == 0 {
+func (player *Player) findAnswer(thisRound round.Round) string {
+	if len(thisRound.GameState()) == 0 {
 		return string(letters[rand.Intn(len(letters))])
 	}
-	player.minimax(round)
+	player.minimax(thisRound)
 	return *player.choice
 }
 
 // TakeTurn does something
-func (player *Player) TakeTurn(round Round.Round) string {
+func (player *Player) TakeTurn(thisRound round.Round) string {
 	var nextLetter string
 	if player.IsAI == true {
 		player.choice = &nextLetter
-		player.findAnswer(round)
+		player.findAnswer(thisRound)
 		return nextLetter
 	} else {
 		nextLetter, _ = player.Reader.ReadString('\n')
