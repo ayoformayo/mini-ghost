@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+
+	tree "github.com/ayoformayo/mini-ghost/Tree"
 )
 
 // Dictionary struct
 type Dictionary struct {
 	TotalWords []string
-	WordTree   WordTree
+	WordTree   tree.WordTree
 }
 
 // LoadEligibleWords gets it in memory
@@ -18,55 +20,6 @@ func (thisDictionary *Dictionary) LoadEligibleWords() {
 	lines, _ := ReadLines("Dictionary/EligibleDictionary.txt")
 	thisDictionary.TotalWords = lines
 }
-
-// HOW CAN WE COLLAPSE FOLLOWING LOGIC
-
-// FragmentIsWord sees if this exists
-func (tree *WordTree) FragmentIsWord(fragment string) bool {
-	if len(fragment) < 1 {
-		return tree.FinalWord == "true"
-	}
-
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
-
-	if _, ok := tree.Letters[asString]; ok {
-		return tree.Letters[asString].FragmentIsWord(remainder)
-	}
-	return false
-}
-
-// IsEligible  sees if this exists
-func (tree *WordTree) IsEligible(fragment string) bool {
-	if len(fragment) < 1 {
-		return true
-	}
-
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
-
-	if _, ok := tree.Letters[asString]; ok {
-		return tree.Letters[asString].IsEligible(remainder)
-	}
-	return false
-}
-
-// GetFragmentChildren  sees if this exists
-func (tree *WordTree) GetFragmentChildren(fragment string) map[string]*WordTree {
-	if len(fragment) < 1 {
-		return tree.Letters
-	}
-
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
-
-	return tree.Letters[asString].GetFragmentChildren(remainder)
-}
-
-// // ResetDictionary sets eligiblewords to all words again
-// func (dictionary *Dictionary) ResetDictionary() {
-// 	dictionary.EligibleWords = dictionary.TotalWords
-// }
 
 // ReadLines opens dictionary file
 func ReadLines(path string) ([]string, error) {
@@ -84,29 +37,10 @@ func ReadLines(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-// WordTree is Recursive data structure for branches of word search
-type WordTree struct {
-	FinalWord string
-	Letters   map[string]*WordTree
-}
-
-func (tree *WordTree) buildBranches(fragment string) {
-	if len(fragment) < 1 {
-		tree.FinalWord = "true"
-		return
-	}
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
-	if _, ok := tree.Letters[asString]; !ok {
-		tree.Letters[asString] = &WordTree{Letters: make(map[string]*WordTree)}
-	}
-	tree.Letters[asString].buildBranches(remainder)
-}
-
 // BuildWordTree creates the word tree
-func BuildWordTree(lines []string) WordTree {
+func BuildWordTree(lines []string) tree.WordTree {
 	preceedingWord := ""
-	wordTree := WordTree{Letters: make(map[string]*WordTree)}
+	wordTree := tree.WordTree{Letters: make(map[string]*tree.WordTree)}
 
 	for _, v := range lines {
 		if len(v) > 3 {
@@ -114,7 +48,7 @@ func BuildWordTree(lines []string) WordTree {
 			match, _ := regexp.MatchString(reg, v)
 			if len(preceedingWord) == 0 || !match {
 				preceedingWord = v
-				wordTree.buildBranches(v)
+				wordTree.BuildBranches(v)
 			}
 		}
 	}
