@@ -68,7 +68,8 @@ func (round *Round) DidLose(PlayerID int) bool {
 
 // IsOver determines if round has ended
 func (round *Round) IsOver() bool {
-	return round.Dictionary.WordTree.FragmentIsWord(round.GameState())
+	isEliblePhrase := round.Dictionary.WordTree.IsEligible(round.GameState())
+	return !isEliblePhrase || round.Dictionary.WordTree.FragmentIsWord(round.GameState())
 }
 
 // GameState does something

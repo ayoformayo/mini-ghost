@@ -27,7 +27,7 @@ func (game *Game) getPlayerCount() int {
 	playerNumber, _ := game.reader.ReadString('\n')
 	strippedNumber := strings.TrimSpace(playerNumber)
 	number, err := strconv.Atoi(strippedNumber)
-	if err != nil {
+	if err != nil || number < 1 {
 		fmt.Println("Whoops! Not a valid number. Try again")
 		return game.getPlayerCount()
 	}
@@ -65,7 +65,7 @@ func (game *Game) playRound(round round.Round) {
 	var lastPlayerID int
 
 	for !round.IsOver() {
-		activePlayer := game.Players[game.ActivePlayer]
+		activePlayer := &game.Players[game.ActivePlayer]
 		// this needs to be thought out better
 		if game.ActivePlayer < len(game.Players)-1 {
 			game.ActivePlayer++
@@ -88,7 +88,7 @@ func (game *Game) playRound(round round.Round) {
 				break
 			} else {
 				fmt.Println("Challenge Failed")
-				lastPlayerID = activePlayer.ID
+				game.ActivePlayer--
 				break
 			}
 		}

@@ -192,6 +192,20 @@ func TestOneOnOne(t *testing.T) {
 // 	}
 // }
 
+func TestMinimax(t *testing.T) {
+	roundStates := []round.Move{
+		{Letter: "Z", PlayerID: 0},
+		{Letter: "Z", PlayerID: 1},
+		{Letter: "X", PlayerID: 0},
+	}
+
+	newRound := round.Round{PlayerOrder: []int{0, 1}, Moves: roundStates, Dictionary: thisDictionary}
+	fmt.Printf("newRound = %v\n", newRound)
+	aiPlayer := player.Player{ID: 1, IsAI: true, Dictionary: thisDictionary}
+	nextRound := aiPlayer.Minimax(newRound)
+	fmt.Printf("nextRound = %v\n", nextRound)
+}
+
 func BenchmarkScore(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, test := range oneOnOne {

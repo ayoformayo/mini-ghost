@@ -35,7 +35,7 @@ func (player *Player) Score(thisRound round.Round) int {
 	return 0
 }
 
-func (player *Player) minimax(thisRound round.Round) int {
+func (player *Player) Minimax(thisRound round.Round) int {
 	if thisRound.IsOver() {
 		return player.Score(thisRound)
 	}
@@ -52,21 +52,25 @@ func (player *Player) minimax(thisRound round.Round) int {
 
 		newMove := round.Move{Letter: letter, PlayerID: playerID}
 		newRound.Moves = append(newRound.Moves, newMove)
-		minimaxed := player.minimax(newRound)
+		minimaxed := player.Minimax(newRound)
 		scores = append(scores, minimaxed)
 		moves = append(moves, letter)
 	}
 
 	if thisRound.LastPlayer() != player.ID {
 		maxScore := -10
-		moveIndex := -1
+		moveIndex := -0
 		for i, score := range scores {
 			if score >= maxScore {
 				maxScore = score
 				moveIndex = i
 			}
 		}
-		*player.choice = moves[moveIndex]
+		fmt.Printf("moves = %v", moves)
+		fmt.Printf("moveIndex = %v", moveIndex)
+		if len(moves) > 0 {
+			*player.choice = moves[moveIndex]
+		}
 		return maxScore
 	}
 	minScore := 10
@@ -85,7 +89,7 @@ func (player *Player) findAnswer(thisRound round.Round) string {
 	if len(thisRound.GameState()) == 0 {
 		return string(letters[rand.Intn(len(letters))])
 	}
-	player.minimax(thisRound)
+	player.Minimax(thisRound)
 	return *player.choice
 }
 
