@@ -2,7 +2,6 @@ package player
 
 import (
 	"bufio"
-	"fmt"
 	"math/rand"
 	"strings"
 
@@ -67,8 +66,6 @@ func (player *Player) Minimax(thisRound round.Round) int {
 				moveIndex = i
 			}
 		}
-		fmt.Printf("moves = %v", moves)
-		fmt.Printf("moveIndex = %v", moveIndex)
 		if len(moves) > 0 {
 			*player.choice = moves[moveIndex]
 		}
