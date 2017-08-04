@@ -2,6 +2,7 @@ package player
 
 import (
 	"bufio"
+	"fmt"
 	"math/rand"
 	"strings"
 
