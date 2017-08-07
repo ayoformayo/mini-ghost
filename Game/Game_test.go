@@ -2,7 +2,7 @@ package game_test
 
 import (
 	// dictionary "github.com/ayoformayo/mini-ghost/Dictionary"
-	"fmt"
+
 	"testing"
 
 	game "github.com/ayoformayo/mini-ghost/Game"
@@ -18,7 +18,6 @@ func TestFindPlayer(t *testing.T) {
 		// {ID: 4, IsAI: true, Dictionary: dictionary},
 	}
 	game := game.Game{Players: players}
-	fmt.Println(game)
 	foundPlayer := game.FindPlayer(players[0].ID)
 	foundPlayer.Letters += "G"
 	if game.Players[0].Letters != "G" {
