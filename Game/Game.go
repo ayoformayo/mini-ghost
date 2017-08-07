@@ -152,7 +152,7 @@ func (game *Game) playRound() {
 			}
 		}
 	}
-	lastPlayer := game.getLastPlayer()
+	lastPlayer := game.GetLastPlayer()
 	var playerIndex int
 	for i, player := range game.Players {
 		if lastPlayer.ID == player.ID {
