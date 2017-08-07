@@ -1,8 +1,6 @@
 package game_test
 
 import (
-	// dictionary "github.com/ayoformayo/mini-ghost/Dictionary"
-
 	"testing"
 
 	game "github.com/ayoformayo/mini-ghost/Game"

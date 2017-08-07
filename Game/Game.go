@@ -49,7 +49,7 @@ func (game *Game) populatePlayers(count int) {
 	}
 }
 
-// GenerateFirstRound does something else
+// GenerateFirstRound sets up the initial round of the game with players
 func (game *Game) GenerateFirstRound() {
 	playerCount := game.getPlayerCount()
 	game.populatePlayers(playerCount)
@@ -61,7 +61,7 @@ func (game *Game) GenerateFirstRound() {
 	game.Rounds = append(game.Rounds, firstRound)
 }
 
-// FindPlayer does something
+// FindPlayer returns a pointer to a Player in the Players Slice
 func (game *Game) FindPlayer(playerID int) *player.Player {
 	numberOfRounds := len(game.Rounds)
 	var playerToFInd player.Player
@@ -112,6 +112,7 @@ func (game *Game) getActivePlayer() *player.Player {
 	return activePlayer
 }
 
+// GetLastPlayer finds the last player of the last round and returns a pointer to it on the game
 func (game *Game) GetLastPlayer() *player.Player {
 	numberOfRounds := len(game.Rounds)
 	var lastPlayer *player.Player
@@ -137,7 +138,6 @@ func (game *Game) playRound() {
 		fmt.Print("What will the next letter be?\n")
 		letter := activePlayer.TakeTurn(round)
 		round.AppendLetter(letter, activePlayer.ID)
-		// to do - clean up if loop and dictionary loop up
 		if letter != "1" {
 			fmt.Println(fmt.Sprintf("%s wrote %s", activePlayer.Name, letter))
 			fmt.Println(fmt.Sprintf("Phrase is now at %s", round.GameState()))
@@ -154,32 +154,24 @@ func (game *Game) playRound() {
 		}
 	}
 	lastPlayer := game.GetLastPlayer()
-	var playerIndex int
-	for i, player := range game.Players {
-		if lastPlayer.ID == player.ID {
-			playerIndex = i
-		}
-	}
-	actualPlayer := game.Players[playerIndex]
-	ghostLetter := string("GHOST"[len(actualPlayer.Letters)])
+	ghostLetter := string("GHOST"[len(lastPlayer.Letters)])
+	lastPlayer.Letters += ghostLetter
 
-	game.Players[playerIndex].Letters += ghostLetter
-
-	if game.Players[playerIndex].Letters != "GHOST" {
-		fmt.Println(fmt.Sprintf("%s now has %s", game.Players[playerIndex].Name, game.Players[playerIndex].Letters))
+	if lastPlayer.Letters != "GHOST" {
+		fmt.Println(fmt.Sprintf("%s now has %s", lastPlayer.Name, lastPlayer.Letters))
 		fmt.Println()
 		nextRound := round.GenerateNextRound()
 		game.Rounds = append(game.Rounds, nextRound)
 		game.playRound()
 	} else {
-		fmt.Println(fmt.Sprintf("%s has lost!", game.Players[playerIndex].Name))
+		fmt.Println(fmt.Sprintf("%s has lost!", lastPlayer.Name))
 		for _, player := range game.Players {
 			fmt.Println(fmt.Sprintf("%s has %s!", player.Name, player.Letters))
 		}
 	}
 }
 
-// StartGame does something
+// StartGame provides the entry point to the game
 func (game *Game) StartGame() {
 	game.reader = bufio.NewReader(os.Stdin)
 	fmt.Print("Welcome to Ghost! Please select number of players - max 5\n")
