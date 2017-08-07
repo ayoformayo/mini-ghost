@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ayoformayo/mini-ghost/Dictionary"
-	"github.com/ayoformayo/mini-ghost/Game"
+	game "github.com/ayoformayo/mini-ghost/Game"
 	tree "github.com/ayoformayo/mini-ghost/Tree"
 )
 
@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("Word Tree built")
 	dictionary := dictionary.Dictionary{WordTree: wordTree}
 	// dictionary.LoadEligibleWords()
-	game := Game.Game{Dictionary: dictionary}
+	game := game.Game{Dictionary: dictionary}
 	game.StartGame()
 
 }
