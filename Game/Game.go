@@ -70,7 +70,8 @@ func (game *Game) getActiveRound() *round.Round {
 	return &game.Rounds[numberOfRounds-1]
 }
 
-func (game *Game) findPlayer(playerID int) *player.Player {
+// FindPlayer does something
+func (game *Game) FindPlayer(playerID int) *player.Player {
 	numberOfRounds := len(game.Rounds)
 	var playerToFInd player.Player
 	if len(game.Players) < 1 {
@@ -106,11 +107,11 @@ func (game *Game) getActivePlayer() *player.Player {
 		activeIndex = len(activeRound.Moves) % len(activeRound.PlayerOrder)
 	}
 	activePlayerID := playerOrder[activeIndex]
-	activePlayer = game.findPlayer(activePlayerID)
+	activePlayer = game.FindPlayer(activePlayerID)
 	return activePlayer
 }
 
-func (game *Game) getLastPlayer() *player.Player {
+func (game *Game) GetLastPlayer() *player.Player {
 	numberOfRounds := len(game.Rounds)
 	var lastPlayer *player.Player
 	if len(game.Players) < 1 {
@@ -122,7 +123,7 @@ func (game *Game) getLastPlayer() *player.Player {
 
 	lastRound := game.getActiveRound()
 	lastPlayerID := lastRound.LastPlayer()
-	lastPlayer = game.findPlayer(lastPlayerID)
+	lastPlayer = game.FindPlayer(lastPlayerID)
 	return lastPlayer
 }
 
