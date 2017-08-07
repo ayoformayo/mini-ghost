@@ -92,11 +92,11 @@ func (player *Player) findAnswer(thisRound round.Round) string {
 }
 
 // TakeTurn does something
-func (player *Player) TakeTurn(thisRound round.Round) string {
+func (player *Player) TakeTurn(thisRound *round.Round) string {
 	var nextLetter string
 	if player.IsAI == true {
 		player.choice = &nextLetter
-		nextLetter = player.findAnswer(thisRound)
+		nextLetter = player.findAnswer(*thisRound)
 	} else {
 		nextLetter, _ = player.Reader.ReadString('\n')
 	}

@@ -89,7 +89,7 @@ func TestTakeTurn(t *testing.T) {
 	validLetters := []string{"I", "E"}
 	for _, test := range tests {
 		isValid := false
-		foundAnswer := test.TakeTurn(round)
+		foundAnswer := test.TakeTurn(&round)
 		for _, letter := range validLetters {
 			if letter == foundAnswer {
 				isValid = true
@@ -147,7 +147,7 @@ func TestOneOnOne(t *testing.T) {
 	playerTwo := oneOnOne[1]
 	winningLetter := "L"
 	for i := 0; i < 100; i++ {
-		answer := playerTwo.TakeTurn(round)
+		answer := playerTwo.TakeTurn(&round)
 		if answer != winningLetter {
 			t.Errorf("Player(%q)didnt use L to win, used %s", playerTwo.ID, answer)
 			break

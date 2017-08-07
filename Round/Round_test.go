@@ -5,9 +5,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ayoformayo/mini-ghost/Dictionary"
+	dictionary "github.com/ayoformayo/mini-ghost/Dictionary"
 	player "github.com/ayoformayo/mini-ghost/Player"
 	round "github.com/ayoformayo/mini-ghost/Round"
+	tree "github.com/ayoformayo/mini-ghost/Tree"
 )
 
 const targetTestVersion = 1
@@ -19,9 +20,9 @@ var fakeDictionary = []string{
 	"ZIBELLINE",
 }
 
-var wordTree = Dictionary.BuildWordTree(fakeDictionary)
+var wordTree = tree.BuildWordTree(fakeDictionary)
 
-var dictionary = &Dictionary.Dictionary{WordTree: wordTree}
+var thisDictionary = &dictionary.Dictionary{WordTree: wordTree}
 
 type testCase struct {
 	round               round.Round
@@ -32,7 +33,7 @@ type testCase struct {
 var tests = []testCase{
 	{
 		round: round.Round{
-			Dictionary:  dictionary,
+			Dictionary:  thisDictionary,
 			PlayerOrder: []int{0, 1},
 			Moves: []round.Move{
 				{Letter: "A", PlayerID: 0},
@@ -45,9 +46,9 @@ var tests = []testCase{
 		},
 		expectedPlayerOrder: []int{1, 0},
 	},
-	// {ID: 2, IsAI: true, Dictionary: dictionary},
-	// {ID: 3, IsAI: true, Dictionary: dictionary},
-	// {ID: 4, IsAI: true, Dictionary: dictionary},
+	// {ID: 2, IsAI: true, Dictionary: thisDictionary},
+	// {ID: 3, IsAI: true, Dictionary: thisDictionary},
+	// {ID: 4, IsAI: true, Dictionary: thisDictionary},
 }
 
 func TestAppendLetter(t *testing.T) {
@@ -108,10 +109,82 @@ func TestGenerateNextRound(t *testing.T) {
 
 	for _, test := range tests {
 		test.round.Moves = roundStates
-		test.round.Dictionary = dictionary
+		test.round.Dictionary = thisDictionary
 		nextRound := test.round.GenerateNextRound()
 		if !reflect.DeepEqual(nextRound.PlayerOrder, test.expectedPlayerOrder) {
 			t.Errorf("Round generated %v, not %v", nextRound.PlayerOrder, []int{1, 0})
+		}
+	}
+
+	if round.TestVersion != targetTestVersion {
+		t.Fatalf("Found player.TestVersion = %v, want %v.", player.TestVersion, targetTestVersion)
+	}
+}
+
+func TestPlayerLose(t *testing.T) {
+	roundStates := []round.Move{
+		{Letter: "A", PlayerID: 0},
+		{Letter: "A", PlayerID: 1},
+		{Letter: "H", PlayerID: 0},
+		{Letter: "I", PlayerID: 1},
+		{Letter: "N", PlayerID: 0},
+		{Letter: "1", PlayerID: 1},
+	}
+
+	for _, test := range tests {
+		test.round.Moves = roundStates
+		test.round.Dictionary = thisDictionary
+		oneLost := test.round.DidLose(1)
+		zeroLost := test.round.DidLose(0)
+		if oneLost != true {
+			t.Errorf("PlayerLose thought %d lost", 1)
+		}
+		if zeroLost == true {
+			t.Errorf("PlayerLose didnt think %d lost", 0)
+		}
+	}
+}
+
+func TestGenerateFailChallenge(t *testing.T) {
+	roundStates := []round.Move{
+		{Letter: "A", PlayerID: 0},
+		{Letter: "A", PlayerID: 1},
+		{Letter: "H", PlayerID: 0},
+		{Letter: "I", PlayerID: 1},
+		{Letter: "N", PlayerID: 0},
+		{Letter: "1", PlayerID: 1},
+	}
+
+	for _, test := range tests {
+		test.round.Moves = roundStates
+		test.round.Dictionary = thisDictionary
+		nextRound := test.round.GenerateNextRound()
+		if !reflect.DeepEqual(nextRound.PlayerOrder, []int{1, 0}) {
+			t.Errorf("TestGenerateFailChallenge Round generated %v, not %v\n", nextRound.PlayerOrder, []int{1, 0})
+		}
+	}
+
+	if round.TestVersion != targetTestVersion {
+		t.Fatalf("Found player.TestVersion = %v, want %v.", player.TestVersion, targetTestVersion)
+	}
+}
+
+func TestGenerateChallengeSuccess(t *testing.T) {
+	roundStates := []round.Move{
+		{Letter: "A", PlayerID: 0},
+		{Letter: "A", PlayerID: 1},
+		{Letter: "H", PlayerID: 0},
+		{Letter: "I", PlayerID: 1},
+		{Letter: "Q", PlayerID: 0},
+		{Letter: "1", PlayerID: 1},
+	}
+
+	for _, test := range tests {
+		test.round.Moves = roundStates
+		test.round.Dictionary = thisDictionary
+		nextRound := test.round.GenerateNextRound()
+		if !reflect.DeepEqual(nextRound.PlayerOrder, []int{0, 1}) {
+			t.Errorf("TestGenerateChallengeSuccess =Round generated %v, not %v", nextRound.PlayerOrder, []int{0, 1})
 		}
 	}
 
