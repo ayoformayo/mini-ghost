@@ -1,9 +1,11 @@
 package tree
+
 import (
-  "fmt"
-  "regexp"
-  "errors"
+	"errors"
+	"fmt"
+	"regexp"
 )
+
 // WordTree is Recursive data structure for branches of word search
 type WordTree struct {
 	FinalWord string
@@ -44,9 +46,7 @@ func (tree *WordTree) FragmentIsWord(fragment string) bool {
 	return false
 }
 
-
-
-// GetFragmentChildren  sees if this exists
+// GetFragmentChildren  get possible options given a certain fragment
 func (tree *WordTree) GetFragmentChildren(fragment string) (map[string]*WordTree, error) {
 	if len(fragment) < 1 {
 		return tree.Letters, nil
@@ -54,14 +54,14 @@ func (tree *WordTree) GetFragmentChildren(fragment string) (map[string]*WordTree
 
 	asString := string(fragment[:1])
 	remainder := string(fragment[1:])
-  if _, ok := tree.Letters[asString]; !ok{
-    return nil, errors.New("This is an invalid phrase")
-  }
+	if _, ok := tree.Letters[asString]; !ok {
+		return nil, errors.New("This is an invalid phrase")
+	}
 
 	return tree.Letters[asString].GetFragmentChildren(remainder)
 }
 
-// IsEligible  sees if this exists
+// IsEligible tests if a phrase has possible descendants
 func (tree *WordTree) IsEligible(fragment string) bool {
 	if len(fragment) < 1 {
 		return true
@@ -76,7 +76,7 @@ func (tree *WordTree) IsEligible(fragment string) bool {
 	return false
 }
 
-// BuildBranches for tree
+// BuildBranches creates the all the word branches for the tree
 func (tree *WordTree) BuildBranches(fragment string) {
 	if len(fragment) < 1 {
 		tree.FinalWord = "true"

@@ -25,7 +25,7 @@ type Player struct {
 const TestVersion = 1
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-// Score does b
+// Score evaluates the end value of any given move
 func (player *Player) Score(thisRound round.Round) int {
 	if thisRound.DidLose(player.ID) {
 		return -10
@@ -35,6 +35,7 @@ func (player *Player) Score(thisRound round.Round) int {
 	return 0
 }
 
+// Minimax does the recursive heavy lifting to identify optimal move choice
 func (player *Player) Minimax(thisRound round.Round) int {
 	if thisRound.IsOver() {
 		return player.Score(thisRound)
@@ -91,7 +92,7 @@ func (player *Player) findAnswer(thisRound round.Round) string {
 	return *player.choice
 }
 
-// TakeTurn does something
+// TakeTurn either asks a human player to enter a letter or passes the baton to the AI
 func (player *Player) TakeTurn(thisRound *round.Round) string {
 	var nextLetter string
 	if player.IsAI == true {

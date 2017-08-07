@@ -4,7 +4,7 @@ import (
 	dictionary "github.com/ayoformayo/mini-ghost/Dictionary"
 )
 
-// Round stuff
+// Round is the struct concludes when a player gets a letter
 type Round struct {
 	Number      int
 	Moves       []Move
@@ -12,18 +12,21 @@ type Round struct {
 	Dictionary  *dictionary.Dictionary
 }
 
+// Move is the struct containing a letter and the player that issued it
 type Move struct {
 	Letter   string
 	PlayerID int
 }
 
+// TestVersion sets which tests get fired off
 const TestVersion = 1
 
+// IsChallenge returns whether a user issued a letter or challenge
 func (move *Move) IsChallenge() bool {
 	return move.Letter == "1"
 }
 
-// GenerateNextRound creates round for game to pass on down with new pkayer order
+// GenerateNextRound creates round for game to pass on down with new player order
 func (round *Round) GenerateNextRound() Round {
 	if round.IsOver() {
 		playerOrder := round.GetNextPlayerOrder()
@@ -34,25 +37,25 @@ func (round *Round) GenerateNextRound() Round {
 }
 
 // GetNextPlayerOrder get list of player order
-func (thisRound *Round) GetNextPlayerOrder() []int {
-	if len(thisRound.Moves) < 1 {
-		return thisRound.PlayerOrder
+func (round *Round) GetNextPlayerOrder() []int {
+	if len(round.Moves) < 1 {
+		return round.PlayerOrder
 	}
 	var playerIndex int
-	for i, playerID := range thisRound.PlayerOrder {
-		if thisRound.DidLose(playerID) {
+	for i, playerID := range round.PlayerOrder {
+		if round.DidLose(playerID) {
 			playerIndex = i
 			break
 		}
 	}
 
-	upToAndIncludingIndex := thisRound.PlayerOrder[:playerIndex]
-	afterIndex := thisRound.PlayerOrder[playerIndex:]
+	upToAndIncludingIndex := round.PlayerOrder[:playerIndex]
+	afterIndex := round.PlayerOrder[playerIndex:]
 
 	return append(afterIndex, upToAndIncludingIndex...)
 }
 
-// LastPlayer determines if round has ended
+// LastPlayer returns the last player to have made a move
 func (round *Round) LastPlayer() int {
 
 	if len(round.Moves) < 1 {
@@ -63,7 +66,7 @@ func (round *Round) LastPlayer() int {
 	return lastMove.PlayerID
 }
 
-// LastMove determines if round has ended
+// LastMove returns the last move of the round
 func (round *Round) LastMove() Move {
 
 	lengthMoves := len(round.Moves) - 1
@@ -74,13 +77,12 @@ func (round *Round) LastMove() Move {
 	return lastMove
 }
 
-// LastMove determines if round has ended
 func (round *Round) didChallenge() bool {
 	move := round.LastMove()
 	return move.IsChallenge()
 }
 
-// DidLose determines if a player took the last and losing turn of the game
+// DidLose determines if a individual player lost the round
 func (round *Round) DidLose(PlayerID int) bool {
 	lastMove := round.LastMove()
 	isChallenge := lastMove.IsChallenge()
@@ -101,7 +103,7 @@ func (round *Round) DidLose(PlayerID int) bool {
 	return gameOver && isLast
 }
 
-// IsOver determines if round has ended
+// IsOver determines if round has ended, by word completion, challenge or inco
 func (round *Round) IsOver() bool {
 	lastMove := round.LastMove()
 	isChallenge := lastMove.IsChallenge()
@@ -109,7 +111,7 @@ func (round *Round) IsOver() bool {
 	return !isEliblePhrase || round.Dictionary.WordTree.FragmentIsWord(round.GameState()) || isChallenge
 }
 
-// GameState does something
+// GameState returns the phrase assembled in the round thus far
 func (round *Round) GameState() string {
 	compiledFragment := ""
 	for _, Move := range round.Moves {
@@ -119,7 +121,7 @@ func (round *Round) GameState() string {
 	return compiledFragment
 }
 
-// AppendLetter does something
+// AppendLetter adds a move
 func (round *Round) AppendLetter(letter string, PlayerID int) {
 	round.Moves = append(round.Moves, Move{Letter: letter, PlayerID: PlayerID})
 }
