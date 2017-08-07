@@ -49,7 +49,8 @@ func (game *Game) populatePlayers(count int) {
 	}
 }
 
-func (game *Game) generateFirstRound() {
+// GenerateFirstRound does something else
+func (game *Game) GenerateFirstRound() {
 	playerCount := game.getPlayerCount()
 	game.populatePlayers(playerCount)
 	var playerIDs []int
@@ -58,16 +59,6 @@ func (game *Game) generateFirstRound() {
 	}
 	firstRound := round.Round{Number: len(game.Rounds) + 1, Dictionary: &game.Dictionary, PlayerOrder: playerIDs}
 	game.Rounds = append(game.Rounds, firstRound)
-}
-
-func (game *Game) getActiveRound() *round.Round {
-	numberOfRounds := len(game.Rounds)
-	var activeRound *round.Round
-	if numberOfRounds < 1 {
-		return activeRound
-	}
-
-	return &game.Rounds[numberOfRounds-1]
 }
 
 // FindPlayer does something
@@ -81,12 +72,22 @@ func (game *Game) FindPlayer(playerID int) *player.Player {
 		return &game.Players[0]
 	}
 
-	for _, player := range game.Players {
+	for i, player := range game.Players {
 		if playerID == player.ID {
-			playerToFInd = player
+			return &game.Players[i]
 		}
 	}
-	return &playerToFInd
+	return &game.Players[0]
+}
+
+func (game *Game) getActiveRound() *round.Round {
+	numberOfRounds := len(game.Rounds)
+	var activeRound *round.Round
+	if numberOfRounds < 1 {
+		return activeRound
+	}
+
+	return &game.Rounds[numberOfRounds-1]
 }
 
 func (game *Game) getActivePlayer() *player.Player {
@@ -182,6 +183,6 @@ func (game *Game) playRound() {
 func (game *Game) StartGame() {
 	game.reader = bufio.NewReader(os.Stdin)
 	fmt.Print("Welcome to Ghost! Please select number of players - max 5\n")
-	game.generateFirstRound()
+	game.GenerateFirstRound()
 	game.playRound()
 }
