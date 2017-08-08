@@ -77,11 +77,6 @@ func (round *Round) LastMove() Move {
 	return lastMove
 }
 
-func (round *Round) didChallenge() bool {
-	move := round.LastMove()
-	return move.IsChallenge()
-}
-
 // DidLose determines if a individual player lost the round
 func (round *Round) DidLose(PlayerID int) bool {
 	lastMove := round.LastMove()
@@ -124,4 +119,11 @@ func (round *Round) GameState() string {
 // AppendLetter adds a move
 func (round *Round) AppendLetter(letter string, PlayerID int) {
 	round.Moves = append(round.Moves, Move{Letter: letter, PlayerID: PlayerID})
+}
+
+// Unexported
+
+func (round *Round) didChallenge() bool {
+	move := round.LastMove()
+	return move.IsChallenge()
 }

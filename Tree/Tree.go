@@ -31,10 +31,6 @@ func BuildWordTree(lines []string) WordTree {
 
 // HOW CAN WE COLLAPSE FOLLOWING LOGIC
 
-func splitFragment(fragment string) (string, string) {
-	return string(fragment[:1]), string(fragment[1:])
-}
-
 // FragmentIsWord sees if this exists
 func (tree *WordTree) FragmentIsWord(fragment string) bool {
 	if len(fragment) < 1 {
@@ -90,4 +86,9 @@ func (tree *WordTree) BuildBranches(fragment string) {
 	}
 
 	tree.Letters[asString].BuildBranches(remainder)
+}
+
+// Unexported
+func splitFragment(fragment string) (string, string) {
+	return string(fragment[:1]), string(fragment[1:])
 }

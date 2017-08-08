@@ -36,6 +36,8 @@ func ReadLines(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
+// Unexported
+
 func writeEligibleDictionary(lines []string) {
 	f, _ := os.Create("Dictionary/EligibleDictionary.txt")
 	// check(err)
