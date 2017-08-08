@@ -31,18 +31,21 @@ func BuildWordTree(lines []string) WordTree {
 
 // HOW CAN WE COLLAPSE FOLLOWING LOGIC
 
+func splitFragment(fragment string) (string, string) {
+	return string(fragment[:1]), string(fragment[1:])
+}
+
 // FragmentIsWord sees if this exists
 func (tree *WordTree) FragmentIsWord(fragment string) bool {
 	if len(fragment) < 1 {
 		return tree.FinalWord == "true"
 	}
 
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
-
+	asString, remainder := splitFragment(fragment)
 	if _, ok := tree.Letters[asString]; ok {
 		return tree.Letters[asString].FragmentIsWord(remainder)
 	}
+
 	return false
 }
 
@@ -52,8 +55,7 @@ func (tree *WordTree) GetFragmentChildren(fragment string) (map[string]*WordTree
 		return tree.Letters, nil
 	}
 
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
+	asString, remainder := splitFragment(fragment)
 	if _, ok := tree.Letters[asString]; !ok {
 		return nil, errors.New("This is an invalid phrase")
 	}
@@ -67,12 +69,11 @@ func (tree *WordTree) IsEligible(fragment string) bool {
 		return true
 	}
 
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
-
+	asString, remainder := splitFragment(fragment)
 	if _, ok := tree.Letters[asString]; ok {
 		return tree.Letters[asString].IsEligible(remainder)
 	}
+
 	return false
 }
 
@@ -82,10 +83,11 @@ func (tree *WordTree) BuildBranches(fragment string) {
 		tree.FinalWord = "true"
 		return
 	}
-	asString := string(fragment[:1])
-	remainder := string(fragment[1:])
+
+	asString, remainder := splitFragment(fragment)
 	if _, ok := tree.Letters[asString]; !ok {
 		tree.Letters[asString] = &WordTree{Letters: make(map[string]*WordTree)}
 	}
+
 	tree.Letters[asString].BuildBranches(remainder)
 }
