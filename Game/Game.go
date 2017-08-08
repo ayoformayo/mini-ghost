@@ -23,30 +23,12 @@ type Game struct {
 	// letter
 }
 
-func (game *Game) getPlayerCount() int {
-	playerNumber, _ := game.reader.ReadString('\n')
-	strippedNumber := strings.TrimSpace(playerNumber)
-	number, err := strconv.Atoi(strippedNumber)
-	if err != nil || number < 1 {
-		fmt.Println("Whoops! Not a valid number. Try again")
-		return game.getPlayerCount()
-	}
-	return number
-}
-
-func (game *Game) populatePlayers(count int) {
-	i := 0
-	for i < count {
-		game.Players = append(game.Players,
-			player.Player{Name: fmt.Sprintf("Player %d", i+1),
-				Dictionary: &game.Dictionary,
-				ID:         i,
-				// IsAI:       true,
-				IsAI:        i != 0,
-				PlayerCount: count,
-				Reader:      game.reader})
-		i++
-	}
+// StartGame provides the entry point to the game
+func (game *Game) StartGame() {
+	game.reader = bufio.NewReader(os.Stdin)
+	fmt.Print("Welcome to Ghost! Please select number of players - max 5\n")
+	game.GenerateFirstRound()
+	game.playRound()
 }
 
 // GenerateFirstRound sets up the initial round of the game with players
@@ -80,6 +62,51 @@ func (game *Game) FindPlayer(playerID int) *player.Player {
 	return &game.Players[0]
 }
 
+// GetLastPlayer finds the last player of the last round and returns a pointer to it on the game
+func (game *Game) GetLastPlayer() *player.Player {
+	numberOfRounds := len(game.Rounds)
+	var lastPlayer *player.Player
+	if len(game.Players) < 1 {
+		return lastPlayer
+	}
+	if numberOfRounds < 1 {
+		return &game.Players[0]
+	}
+
+	lastRound := game.getActiveRound()
+	lastPlayerID := lastRound.LastPlayer()
+	lastPlayer = game.FindPlayer(lastPlayerID)
+	return lastPlayer
+}
+
+// Unexported
+
+func (game *Game) getPlayerCount() int {
+	playerNumber, _ := game.reader.ReadString('\n')
+	strippedNumber := strings.TrimSpace(playerNumber)
+	number, err := strconv.Atoi(strippedNumber)
+	if err != nil || number < 1 {
+		fmt.Println("Whoops! Not a valid number. Try again")
+		return game.getPlayerCount()
+	}
+	return number
+}
+
+func (game *Game) populatePlayers(count int) {
+	i := 0
+	for i < count {
+		game.Players = append(game.Players,
+			player.Player{Name: fmt.Sprintf("Player %d", i+1),
+				Dictionary: &game.Dictionary,
+				ID:         i,
+				IsAI:       true,
+				// IsAI:        i != 0,
+				PlayerCount: count,
+				Reader:      game.reader})
+		i++
+	}
+}
+
 func (game *Game) getActiveRound() *round.Round {
 	numberOfRounds := len(game.Rounds)
 	var activeRound *round.Round
@@ -110,23 +137,6 @@ func (game *Game) getActivePlayer() *player.Player {
 	activePlayerID := playerOrder[activeIndex]
 	activePlayer = game.FindPlayer(activePlayerID)
 	return activePlayer
-}
-
-// GetLastPlayer finds the last player of the last round and returns a pointer to it on the game
-func (game *Game) GetLastPlayer() *player.Player {
-	numberOfRounds := len(game.Rounds)
-	var lastPlayer *player.Player
-	if len(game.Players) < 1 {
-		return lastPlayer
-	}
-	if numberOfRounds < 1 {
-		return &game.Players[0]
-	}
-
-	lastRound := game.getActiveRound()
-	lastPlayerID := lastRound.LastPlayer()
-	lastPlayer = game.FindPlayer(lastPlayerID)
-	return lastPlayer
 }
 
 func (game *Game) playRound() {
@@ -169,12 +179,4 @@ func (game *Game) playRound() {
 			fmt.Println(fmt.Sprintf("%s has %s!", player.Name, player.Letters))
 		}
 	}
-}
-
-// StartGame provides the entry point to the game
-func (game *Game) StartGame() {
-	game.reader = bufio.NewReader(os.Stdin)
-	fmt.Print("Welcome to Ghost! Please select number of players - max 5\n")
-	game.GenerateFirstRound()
-	game.playRound()
 }
