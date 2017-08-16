@@ -99,8 +99,8 @@ func (game *Game) populatePlayers(count int) {
 			player.Player{Name: fmt.Sprintf("Player %d", i+1),
 				Dictionary: &game.Dictionary,
 				ID:         i,
-				IsAI:       true,
-				// IsAI:        i != 0,
+				// IsAI:       true,
+				IsAI:        i != 0,
 				PlayerCount: count,
 				Reader:      game.reader})
 		i++
