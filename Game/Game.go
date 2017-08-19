@@ -131,7 +131,6 @@ func (game *Game) getActivePlayer() *player.Player {
 	playerOrder := activeRound.PlayerOrder
 	activeIndex := 0
 	if len(activeRound.PlayerOrder) > 0 {
-		// fmt.Printf("len(activeRound.Moves) % len(activeRound.PlayerOrder)= %d", len(activeRound.Moves)%len(activeRound.PlayerOrder))
 		activeIndex = len(activeRound.Moves) % len(activeRound.PlayerOrder)
 	}
 	activePlayerID := playerOrder[activeIndex]
